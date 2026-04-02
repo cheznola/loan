@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "@/lib/db";
 
 // --- Job database by category ---
 const JOBS: Record<string, { title: string; description: string }[]> = {
@@ -214,8 +213,9 @@ export async function POST(request: NextRequest) {
 
     const result = generatePrediction(prenom, profileText);
 
-    // Save to database
+    // Save to database (non-blocking, dynamic import to avoid module-level failures)
     try {
+      const { default: pool } = await import("@/lib/db");
       await pool.query(
         `INSERT INTO submissions (prenom, email, localisation, profile_text, likes, dislikes, current_job, future_job, generated_result)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
