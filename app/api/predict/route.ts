@@ -200,6 +200,7 @@ Ce futur est incroyable, et tu ne pourras pas dire que tu n'étais pas au couran
 }
 
 export async function POST(request: NextRequest) {
+  console.log("[predict] Algorithmic endpoint v2 hit");
   try {
     const body = await request.json();
     const { prenom, email, localisation, profileText, likes, dislikes } = body;
