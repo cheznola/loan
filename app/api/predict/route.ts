@@ -304,6 +304,7 @@ export async function POST(request: NextRequest) {
       fullText: result.fullText,
       shareText: result.shareText,
       slackText: result.slackText,
+      version: "v3-jobbank60",
     });
   } catch (error) {
     console.error("Prediction error:", error);
