@@ -231,7 +231,7 @@ export default function TransmissionFeed() {
         <div ref={feedRef} className="p-4 max-h-[240px] overflow-y-auto">
           {visibleLogs.map((log, i) => (
             <div 
-              key={`${log.prenom}-${i}-${Date.now()}`}
+              key={`${log.prenom}-${i}`}
               className={`flex gap-2 py-2 border-b border-zinc-800/50 last:border-0 text-sm leading-relaxed transition-opacity duration-300 ${i === 0 ? 'opacity-100' : 'opacity-60'}`}
               style={{
                 animation: i === 0 ? 'fadeSlideIn 0.4s ease-out' : 'none'
