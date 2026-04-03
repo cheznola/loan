@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import TransmissionFeed from "./components/TransmissionFeed";
 
 const LOADING_MESSAGES = [
   "Loan consulte les archives de 2042...",
@@ -159,8 +160,11 @@ export default function Home() {
         </p>
       </div>
 
+      {/* TRANSMISSION FEED - LIVE TERMINAL */}
+      <TransmissionFeed />
+
       {/* Form */}
-      <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-5">
+      <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-5 mt-10">
         {/* Row 1: Prénom + Email */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
