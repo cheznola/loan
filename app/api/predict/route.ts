@@ -88,8 +88,6 @@ const JOBS: Record<string, { title: string; description: string }[]> = {
   ],
 };
 
-// Category detection keywords removed - now inline in detectCategory()
-
 // --- Random data pools ---
 const SALARIES = [
   "142-168k€ (+ bonus en RTT)",
@@ -155,6 +153,377 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+// ===== CATEGORY KEYWORDS =====
+const CATEGORIES: Record<string, string[]> = {
+  PRODUCT: [
+    // === TITRES DE POSTE (FR + EN) ===
+    'product manager', 'chef de produit', 'product owner', 'product lead', 'product director', 'head of product', 'vp product', 'vp of product', 'chief product officer', 'cpo', 
+    'product ops', 'product operations', 'product analyst', 'associate product manager', 'apm', 'junior product manager', 'junior pm',
+    'senior product manager', 'senior pm', 'staff pm', 'staff product manager', 'group pm', 'group product manager', 'principal pm', 'principal product manager',
+    'product builder', 'ai product manager', 'platform product manager', 'growth pm', 'growth product manager', 'technical product manager', 'tpm',
+    'b2b product manager', 'b2c product manager', 'saas product manager', 'mobile product manager', 'api product manager', 'data product manager', 'internal product manager',
+    'product coach', 'product consultant', 'product trainer', 'product mentor', 'product evangelist',
+    'responsable produit', 'directeur produit', 'directrice produit', 'chef de projet digital', 'chef de projet web', 'chef de projet it',
+    'scrum master', 'agile coach', 'release train engineer', 'rte', 'product portfolio manager',
+    'first pm', '1st pm', 'founding pm', 'solo pm', 'only pm',
+    
+    // === CONCEPTS & MÉTHODOLOGIES PRODUIT ===
+    'product management', 'product discovery', 'product delivery', 'product strategy', 'product vision', 'product roadmap', 'product backlog', 
+    'product metrics', 'product analytics', 'product-led', 'product led growth', 'plg', 'product thinking', 'product mindset', 'product culture',
+    'product sense', 'product instinct', 'product intuition', 'product judgment', 'product taste',
+    'product operating model', 'product model', 'product organization', 'product team', 'product org',
+    'continuous discovery', 'continuous delivery', 'dual track', 'dual track agile', 'product trio', 'discovery trio',
+    'opportunity solution tree', 'ost', 'north star metric', 'nsm', 'input metrics', 'output metrics', 'lagging indicators', 'leading indicators',
+    'jobs to be done', 'jtbd', 'outcome driven innovation', 'odi', 'value proposition', 'value prop',
+    'lean startup', 'build measure learn', 'hypothesis driven', 'experiment driven', 'evidence based', 'data informed', 'data driven',
+    'design thinking', 'human centered design', 'hcd', 'user centered design', 'ucd',
+    
+    // === FRAMEWORKS & MÉTHODES DE PRIORISATION ===
+    'roadmap', 'roadmapping', 'quarterly planning', 'annual planning', 'planning produit', 'product planning',
+    'backlog', 'backlog grooming', 'backlog refinement', 'backlog management', 'backlog prioritization',
+    'user story', 'user stories', 'epic', 'epics', 'feature', 'features', 'initiative', 'initiatives', 'theme', 'themes',
+    'sprint planning', 'sprint review', 'sprint retrospective', 'sprint demo', 'sprint goal', 'sprint backlog',
+    'priorisation', 'prioritization', 'prioritisation', 'priority', 'priorities', 'must have', 'should have', 'could have', 'moscow',
+    'rice', 'rice scoring', 'ice', 'ice scoring', 'weighted scoring', 'value vs effort', 'impact vs effort', 'cost of delay', 'wsjf',
+    'kano model', 'kano', 'feature prioritization', 'feature scoring', 'opportunity scoring',
+    'impact mapping', 'story mapping', 'user story mapping', 'event storming', 'domain driven design',
+    'now next later', 'horizon planning', 'rolling wave', 'theme based roadmap', 'outcome based roadmap', 'timeline roadmap',
+    
+    // === DISCOVERY & RESEARCH ===
+    'discovery', 'product discovery', 'problem discovery', 'solution discovery', 'opportunity discovery',
+    'user research', 'customer research', 'market research', 'competitive research', 'competitive analysis', 'competitor analysis',
+    'user interview', 'customer interview', 'stakeholder interview', 'contextual inquiry', 'ethnographic research',
+    'usability testing', 'usability test', 'user testing', 'guerilla testing', 'moderated testing', 'unmoderated testing',
+    'a/b testing', 'ab testing', 'split testing', 'multivariate testing', 'mvt', 'experimentation', 'experiment',
+    'prototype', 'prototyping', 'rapid prototyping', 'clickable prototype', 'interactive prototype', 'high fidelity prototype', 'low fidelity prototype',
+    'validation', 'assumption testing', 'hypothesis testing', 'riskiest assumption', 'leap of faith assumption',
+    'problem statement', 'problem space', 'solution space', 'opportunity space', 'problem framing',
+    'persona', 'personas', 'user persona', 'buyer persona', 'ideal customer profile', 'icp', 'target audience', 'target user',
+    'customer journey', 'user journey', 'customer journey map', 'user journey map', 'experience map', 'service blueprint',
+    'empathy map', 'empathy mapping', 'pain points', 'gains', 'jobs', 'pains', 'customer pains', 'user pains',
+    
+    // === DELIVERY & EXECUTION ===
+    'delivery', 'product delivery', 'feature delivery', 'release', 'release management', 'release planning',
+    'go to market', 'gtm', 'product launch', 'launch', 'beta launch', 'soft launch', 'hard launch', 'rollout', 'phased rollout',
+    'mvp', 'minimum viable product', 'mmp', 'minimum marketable product', 'mlp', 'minimum lovable product', 'map', 'minimum awesome product',
+    'iteration', 'iterative', 'increment', 'incremental', 'agile delivery', 'continuous deployment', 'continuous release',
+    'feature flag', 'feature toggle', 'feature flags', 'dark launch', 'canary release', 'blue green deployment',
+    'acceptance criteria', 'definition of done', 'dod', 'definition of ready', 'dor', 'done done',
+    
+    // === MÉTRIQUES & KPIs PRODUIT ===
+    'product metrics', 'product kpis', 'success metrics', 'key metrics', 'core metrics', 'health metrics',
+    'product market fit', 'pmf', 'retention', 'user retention', 'customer retention', 'cohort retention', 'day 1 retention', 'day 7 retention', 'day 30 retention',
+    'activation', 'user activation', 'activation rate', 'aha moment', 'magic moment', 'time to value', 'ttv',
+    'engagement', 'user engagement', 'dau', 'daily active users', 'wau', 'weekly active users', 'mau', 'monthly active users', 'dau/mau', 'stickiness',
+    'adoption', 'feature adoption', 'adoption rate', 'feature usage', 'usage analytics', 'product usage',
+    'churn', 'churn rate', 'user churn', 'customer churn', 'revenue churn', 'logo churn',
+    'conversion', 'conversion rate', 'funnel', 'conversion funnel', 'product funnel', 'user funnel', 'onboarding funnel',
+    'nps', 'net promoter score', 'csat', 'customer satisfaction', 'ces', 'customer effort score', 'psat', 'product satisfaction',
+    'arpu', 'arppu', 'ltv', 'lifetime value', 'clv', 'customer lifetime value', 'cac', 'customer acquisition cost', 'ltv/cac',
+    
+    // === AGILE & SCRUM ===
+    'scrum', 'kanban', 'scrumban', 'agile', 'agility', 'lean', 'lean product', 'lean ux', 'lean agile',
+    'safe', 'scaled agile', 'less', 'large scale scrum', 'nexus', 'spotify model', 'tribes', 'squads', 'chapters', 'guilds',
+    'shape up', 'basecamp', 'cycles', 'pitches', 'bets', 'cool down',
+    'okr', 'okrs', 'objectives and key results', 'objective', 'key result', 'key results', 'quarterly okrs', 'annual okrs',
+    'kpi', 'kpis', 'key performance indicator', 'key performance indicators', 'north star', 'input metric', 'output metric',
+    'velocity', 'story points', 'estimation', 'planning poker', 't-shirt sizing', 'relative estimation',
+    'burndown', 'burndown chart', 'burnup', 'cumulative flow', 'cfd', 'cycle time', 'lead time', 'throughput',
+    'retrospective', 'retro', 'sprint retro', 'kaizen', 'continuous improvement', 'inspect and adapt',
+    'standup', 'daily standup', 'daily scrum', 'sync', 'weekly sync', 'all hands',
+    
+    // === OUTILS PRODUIT ===
+    'productboard', 'amplitude', 'mixpanel', 'pendo', 'aha', 'airfocus', 'productplan', 'roadmunk', 'canny', 'uservoice',
+    'hotjar', 'fullstory', 'logrocket', 'heap', 'posthog', 'smartlook', 'clarity', 'mouseflow', 'lucky orange',
+    'jira', 'confluence', 'notion', 'linear', 'asana', 'monday', 'clickup', 'shortcut', 'pivotal tracker', 'trello', 'airtable',
+    'figma', 'miro', 'figjam', 'whimsical', 'mural', 'lucidchart', 'balsamiq', 'sketch', 'invision',
+    'loom', 'zoom', 'google meet', 'teams', 'slack', 'intercom', 'zendesk', 'freshdesk',
+    'segment', 'google analytics', 'ga4', 'firebase', 'appsflyer', 'adjust', 'branch', 'braze', 'customer.io', 'iterable',
+    'optimizely', 'launchdarkly', 'split', 'statsig', 'eppo', 'growthbook', 'vwo', 'ab tasty',
+    'dovetail', 'maze', 'usertesting', 'userinterviews', 'lookback', 'userzoom', 'dscout', 'optimal workshop', 'typeform', 'surveymonkey',
+    
+    // === DOMAINES & CONTEXTES ===
+    'b2b', 'b2c', 'b2b2c', 'saas', 'paas', 'marketplace', 'e-commerce', 'ecommerce', 'fintech', 'healthtech', 'edtech', 'proptech', 'insurtech', 'legaltech', 'hrtech', 'martech', 'adtech',
+    'startup', 'scale-up', 'scaleup', 'early stage', 'growth stage', 'late stage', 'series a', 'series b', 'series c',
+    'product led', 'sales led', 'marketing led', 'plg', 'slg', 'mlg',
+    'mobile app', 'web app', 'desktop app', 'cross platform', 'responsive', 'native app', 'hybrid app', 'pwa',
+    'api', 'api product', 'platform', 'platform product', 'developer experience', 'dx', 'developer tools', 'devtools',
+    'internal product', 'internal tools', 'enterprise product', 'consumer product', 'prosumer',
+    
+    // === SOFT SKILLS & COMPÉTENCES PM ===
+    'stakeholder management', 'stakeholder alignment', 'cross functional', 'cross-functional', 'collaboration', 'influence without authority',
+    'product communication', 'product presentation', 'product pitch', 'executive presentation', 'board presentation',
+    'product writing', 'spec writing', 'prd writing', 'requirements writing', 'documentation',
+    'prd', 'product requirements document', 'product spec', 'product specification', 'spec', 'specs', 'brief', 'product brief', 'one pager', 'one-pager',
+    'trade off', 'trade-off', 'tradeoff', 'decision making', 'prioritization decision', 'say no', 'saying no',
+    'product sense', 'business acumen', 'technical acumen', 'market sense', 'customer empathy', 'user empathy'
+  ],
+
+  TECH: [
+    'developer', 'développeur', 'développeuse', 'dev', 'engineer', 'ingénieur', 'ingénieure', 'software engineer', 'software developer', 'swe', 'frontend developer', 'frontend engineer', 'front-end', 'front end', 'backend developer', 'backend engineer', 'back-end', 'back end', 'fullstack', 'full-stack', 'full stack', 'fullstack developer', 'fullstack engineer',
+    'devops', 'devops engineer', 'sre', 'site reliability engineer', 'platform engineer', 'infrastructure engineer', 'cloud engineer', 'data engineer', 'ml engineer', 'machine learning engineer', 'ai engineer', 'mlops', 'mlops engineer',
+    'cto', 'chief technology officer', 'chief technical officer', 'vp engineering', 'vp of engineering', 'head of engineering', 'head of tech', 'tech lead', 'technical lead', 'lead dev', 'lead developer', 'lead engineer', 'engineering manager', 'em', 'staff engineer', 'staff software engineer', 'principal engineer', 'distinguished engineer',
+    'architect', 'software architect', 'solutions architect', 'technical architect', 'enterprise architect', 'cloud architect',
+    'mobile developer', 'mobile engineer', 'ios developer', 'ios engineer', 'android developer', 'android engineer', 'react native developer', 'flutter developer',
+    'qa engineer', 'qa', 'quality assurance', 'test engineer', 'sdet', 'automation engineer',
+    'security engineer', 'cybersecurity', 'appsec', 'infosec', 'devsecops',
+    'directeur technique', 'responsable technique',
+    'python', 'javascript', 'typescript', 'java', 'golang', 'go lang', 'rust', 'ruby', 'ruby on rails', 'rails', 'php', 'laravel', 'symfony', 'c#', 'dotnet', '.net', 'c++', 'scala', 'kotlin', 'swift', 'objective-c',
+    'nodejs', 'node.js', 'react', 'reactjs', 'react.js', 'vue', 'vuejs', 'vue.js', 'angular', 'svelte', 'nextjs', 'next.js', 'nuxt', 'remix', 'express', 'fastapi', 'django', 'flask', 'spring', 'spring boot', 'nestjs',
+    'aws', 'amazon web services', 'gcp', 'google cloud', 'azure', 'kubernetes', 'k8s', 'docker', 'terraform', 'pulumi', 'ansible', 'jenkins', 'gitlab ci', 'github actions', 'circleci', 'argocd', 'helm',
+    'postgresql', 'postgres', 'mysql', 'mongodb', 'redis', 'elasticsearch', 'kafka', 'rabbitmq',
+    'codebase', 'repository', 'repo', 'git', 'github', 'gitlab', 'bitbucket', 'pull request', 'pr', 'merge request', 'code review', 'deployment', 'ci/cd', 'cicd', 'continuous integration', 'continuous deployment', 'api', 'rest api', 'graphql', 'grpc', 'microservices', 'monolith', 'architecture logicielle', 'software architecture', 'system design', 'technical debt', 'refactoring', 'scalability', 'high availability', 'distributed systems'
+  ],
+
+  DESIGN: [
+    'designer', 'ux designer', 'ui designer', 'ux/ui designer', 'ui/ux designer', 'product designer', 'senior product designer', 'staff designer', 'principal designer', 'visual designer', 'graphic designer', 'graphiste', 'web designer', 'interaction designer', 'motion designer', 'brand designer', 'communication designer',
+    'design lead', 'lead designer', 'head of design', 'design director', 'vp design', 'vp of design', 'chief design officer', 'cdo', 'design manager', 'senior designer',
+    'user researcher', 'ux researcher', 'design researcher', 'research ops', 'researchops',
+    'directeur artistique', 'da', 'creative director', 'directeur de création',
+    'service designer', 'design ops', 'designops', 'design systems lead', 'design technologist',
+    'figma', 'sketch', 'adobe xd', 'xd', 'illustrator', 'photoshop', 'indesign', 'after effects', 'premiere', 'invision', 'framer', 'principle', 'zeplin', 'abstract', 'marvel app', 'balsamiq', 'axure', 'origami', 'protopie', 'lottie',
+    'wireframe', 'wireframes', 'wireframing', 'prototype', 'prototypes', 'prototyping', 'mockup', 'mockups', 'maquette', 'maquettes',
+    'design system', 'design systems', 'design tokens', 'component library', 'ui kit', 'style guide', 'brand guidelines',
+    'user flow', 'user flows', 'user journey', 'journey map', 'journey mapping', 'experience map',
+    'persona', 'personas', 'user persona', 'empathy map', 'user testing', 'usability testing', 'usability', 'accessibility', 'a11y', 'wcag',
+    'design thinking', 'design sprint', 'atomic design', 'responsive design', 'mobile first', 'information architecture', 'ia', 'interaction design', 'visual hierarchy', 'typography', 'color theory', 'iconography'
+  ],
+
+  DATA: [
+    'data analyst', 'data scientist', 'data engineer', 'analytics engineer', 'bi analyst', 'bi developer', 'business intelligence analyst', 'business intelligence developer', 'data ops', 'dataops', 'mlops', 'ml ops',
+    'head of data', 'data lead', 'lead data', 'vp data', 'vp of data', 'chief data officer', 'cdo', 'data manager', 'data director', 'analytics manager', 'analytics director', 'head of analytics',
+    'data architect', 'data modeler', 'data governance',
+    'statisticien', 'statisticienne', 'statistician', 'quantitative analyst', 'quant',
+    'machine learning scientist', 'research scientist', 'applied scientist',
+    'analyste données', 'analyste data', 'data analyste', 'ingénieur data',
+    'sql', 'mysql', 'postgresql', 'bigquery', 'big query', 'snowflake', 'redshift', 'databricks', 'synapse',
+    'tableau', 'power bi', 'powerbi', 'looker', 'metabase', 'superset', 'qlik', 'qliksense', 'sisense', 'datastudio', 'data studio',
+    'dbt', 'fivetran', 'stitch', 'airbyte', 'airflow', 'dagster', 'prefect', 'spark', 'pyspark', 'hadoop', 'hive', 'presto', 'trino',
+    'pandas', 'numpy', 'scikit-learn', 'sklearn', 'tensorflow', 'pytorch', 'keras', 'jupyter', 'notebook',
+    'dashboard', 'dashboards', 'tableau de bord', 'reporting', 'analytics', 'analyse de données', 'data analysis', 'statistiques', 'statistics', 'modélisation', 'modeling',
+    'data viz', 'data visualization', 'visualisation de données', 'data warehouse', 'dwh', 'data lake', 'data lakehouse', 'etl', 'elt', 'data pipeline', 'data pipelines', 'data quality', 'data catalog', 'data lineage',
+    'machine learning', 'ml', 'deep learning', 'dl', 'neural network', 'nlp', 'natural language processing', 'computer vision', 'predictive', 'predictive analytics', 'segmentation', 'clustering', 'classification', 'regression', 'a/b testing', 'ab testing', 'experimentation', 'causal inference',
+    'kpi', 'kpis', 'metrics', 'métriques', 'indicateurs'
+  ],
+
+  SALES: [
+    'sales', 'sales representative', 'sales rep', 'salesperson', 'vendeur', 'vendeuse',
+    'commercial', 'commerciale', 'ingénieur commercial', 'ingénieure commerciale', 'technico-commercial', 'technico-commerciale',
+    'business developer', 'business development', 'bizdev', 'biz dev', 'bd', 'bdr', 'business development representative', 'sdr', 'sales development representative',
+    'account executive', 'ae', 'account manager', 'am', 'key account manager', 'kam', 'strategic account manager', 'sam', 'enterprise account executive', 'named account executive', 'global account manager', 'gam',
+    'sales manager', 'sales director', 'sales lead', 'vp sales', 'vp of sales', 'head of sales', 'chief sales officer', 'cso', 'chief revenue officer', 'cro', 'chief commercial officer', 'cco',
+    'regional sales manager', 'rsm', 'area sales manager', 'territory manager', 'territory sales', 'zone manager',
+    'enterprise sales', 'mid-market sales', 'smb sales', 'inside sales', 'field sales', 'outside sales',
+    'sales engineer', 'se', 'solutions engineer', 'pre-sales', 'presales', 'avant-vente', 'sales consultant', 'solutions consultant',
+    'directeur commercial', 'directrice commerciale', 'responsable commercial', 'responsable commerciale', 'responsable des ventes', 'chef des ventes',
+    'channel sales', 'partner sales', 'alliance manager', 'partner manager', 'channel manager', 'channel partner manager',
+    'closing', 'closer', 'négociation', 'negotiation', 'prospection', 'prospecting', 'cold calling', 'cold call', 'cold email', 'outbound', 'inbound sales',
+    'pipeline', 'sales pipeline', 'funnel', 'sales funnel', 'quota', 'quota attainment', 'target', 'objectifs commerciaux',
+    'revenue', 'arr', 'annual recurring revenue', 'mrr', 'monthly recurring revenue', 'bookings', 'new business', 'new logo',
+    'deal', 'deals', 'opportunity', 'opportunities', 'win rate', 'close rate', 'conversion',
+    'upsell', 'upselling', 'cross-sell', 'cross-selling', 'expansion', 'land and expand',
+    'hunting', 'hunter', 'farming', 'farmer', 'new business acquisition',
+    'sales cycle', 'cycle de vente', 'sales process', 'processus de vente', 'discovery call', 'demo', 'démonstration', 'proposal', 'proposition commerciale', 'rfp', 'rfi',
+    'meddic', 'meddicc', 'meddpicc', 'spin selling', 'spin', 'challenger sale', 'challenger', 'sandler', 'solution selling', 'value selling', 'consultative selling', 'gap selling', 'command of the message',
+    'salesforce', 'sfdc', 'hubspot', 'hubspot crm', 'pipedrive', 'zoho crm', 'dynamics', 'dynamics 365',
+    'outreach', 'salesloft', 'apollo', 'lemlist', 'instantly', 'woodpecker', 'reply.io',
+    'gong', 'chorus', 'clari', 'aviso', 'people.ai',
+    'linkedin sales navigator', 'sales navigator', 'zoominfo', 'lusha', 'cognism', 'clearbit', 'leadiq', 'seamless.ai',
+    'docusign', 'pandadoc', 'proposify', 'qwilr', 'highspot', 'seismic', 'showpad'
+  ],
+
+  CSM: [
+    'customer success', 'customer success manager', 'csm', 'senior csm', 'senior customer success manager', 'strategic csm', 'enterprise csm',
+    'client success', 'client success manager', 'customer success lead', 'customer success director', 'head of customer success', 'vp customer success', 'vp of customer success', 'chief customer officer', 'cco',
+    'customer experience', 'cx', 'cx manager', 'customer experience manager', 'head of cx', 'vp cx',
+    'client partner', 'client director', 'customer advocate', 'customer champion',
+    'customer operations', 'customer ops', 'cs ops', 'csm ops',
+    'customer onboarding', 'onboarding manager', 'onboarding specialist', 'implementation manager', 'implementation consultant', 'implementation specialist',
+    'customer support manager', 'support manager', 'head of support',
+    'customer marketing', 'customer advocacy', 'customer community',
+    'responsable relation client', 'responsable succès client', 'responsable de la satisfaction client', 'chargé de clientèle', 'gestionnaire de compte client',
+    'onboarding', 'onboarding client', 'client onboarding', 'customer onboarding', 'time to value', 'ttv', 'time to first value', 'implementation',
+    'adoption', 'product adoption', 'user adoption', 'feature adoption', 'adoption rate',
+    'retention', 'customer retention', 'client retention', 'gross retention', 'net retention', 'nrr', 'net revenue retention', 'grr', 'gross revenue retention', 'logo retention',
+    'churn', 'churn rate', 'customer churn', 'revenue churn', 'churn prevention', 'churn prediction', 'at-risk', 'at risk',
+    'nps', 'net promoter score', 'csat', 'customer satisfaction', 'ces', 'customer effort score',
+    'health score', 'customer health', 'health scoring', 'customer health score',
+    'qbr', 'quarterly business review', 'ebr', 'executive business review', 'business review',
+    'renewal', 'renewals', 'renewal rate', 'renouvellement', 'contract renewal',
+    'expansion', 'expansion revenue', 'upsell', 'cross-sell',
+    'customer journey', 'customer lifecycle', 'lifecycle', 'customer touchpoint', 'touchpoints',
+    'voice of customer', 'voc', 'customer feedback', 'feedback client', 'customer insights',
+    'success plan', 'success planning', 'mutual success plan', 'joint success plan',
+    'customer advocacy', 'customer reference', 'case study', 'testimonial',
+    'gainsight', 'totango', 'churnzero', 'vitally', 'planhat', 'custify', 'catalyst', 'strikedeck',
+    'intercom', 'zendesk', 'freshdesk', 'helpscout', 'front', 'kustomer', 'gladly', 'dixa',
+    'pendo', 'appcues', 'userpilot', 'chameleon', 'userguiding', 'whatfix',
+    'delighted', 'medallia', 'qualtrics', 'surveymonkey', 'typeform'
+  ],
+
+  MARKETING: [
+    'marketing', 'marketer', 'marketeur', 'marketeuse',
+    'marketing manager', 'marketing director', 'head of marketing', 'vp marketing', 'vp of marketing', 'cmo', 'chief marketing officer',
+    'responsable marketing', 'directeur marketing', 'directrice marketing',
+    'growth', 'growth hacker', 'growth marketer', 'growth manager', 'head of growth', 'vp growth', 'growth lead',
+    'acquisition', 'acquisition manager', 'user acquisition', 'ua manager', 'paid acquisition',
+    'performance marketing', 'performance marketer', 'paid media', 'paid media manager',
+    'seo', 'seo manager', 'seo specialist', 'seo consultant', 'head of seo',
+    'sea', 'sem', 'sem manager', 'ppc', 'ppc manager', 'ppc specialist',
+    'digital marketing', 'digital marketer', 'digital marketing manager', 'online marketing',
+    'content', 'content manager', 'content strategist', 'content marketing', 'content marketing manager', 'head of content', 'content lead', 'content writer', 'copywriter', 'rédacteur', 'rédactrice',
+    'social media', 'social media manager', 'smm', 'community manager', 'cm', 'community lead',
+    'brand', 'brand manager', 'brand director', 'brand marketing', 'head of brand', 'brand strategist',
+    'pr', 'public relations', 'pr manager', 'communications', 'communication manager', 'corporate communications', 'chargé de communication', 'chargée de communication', 'responsable communication', 'directeur communication',
+    'demand generation', 'demand gen', 'demandgen', 'head of demand gen',
+    'product marketing', 'product marketing manager', 'pmm', 'senior pmm', 'head of product marketing', 'product marketing director',
+    'field marketing', 'event marketing', 'events manager', 'event manager',
+    'partner marketing', 'channel marketing', 'co-marketing',
+    'lifecycle marketing', 'crm marketing', 'crm manager', 'email marketing', 'email marketer',
+    'marketing ops', 'marketing operations', 'mops', 'revops', 'revenue operations',
+    'analyst marketing', 'marketing analyst',
+    'organic', 'paid', 'organic traffic', 'paid traffic', 'organic search', 'paid search',
+    'campaign', 'campaigns', 'campagne', 'campagnes', 'campaign management',
+    'funnel', 'marketing funnel', 'conversion funnel', 'lead generation', 'leadgen', 'lead gen', 'lead magnet', 'landing page', 'landing pages', 'lp',
+    'mql', 'marketing qualified lead', 'sql', 'sales qualified lead', 'lead scoring', 'lead nurturing', 'nurturing',
+    'conversion', 'conversion rate', 'cro', 'conversion rate optimization', 'ab testing', 'a/b testing', 'split testing',
+    'copywriting', 'copy', 'messaging', 'positioning', 'value proposition',
+    'branding', 'brand awareness', 'awareness', 'consideration', 'top of funnel', 'tofu', 'mofu', 'bofu',
+    'engagement', 'engagement rate', 'reach', 'impressions', 'clicks', 'ctr', 'click through rate',
+    'inbound marketing', 'outbound marketing', 'content strategy', 'editorial calendar', 'content calendar',
+    'influencer', 'influencer marketing', 'creator', 'ugc', 'user generated content',
+    'viral', 'virality', 'word of mouth', 'referral', 'referral marketing',
+    'google analytics', 'ga4', 'google ads', 'google tag manager', 'gtm',
+    'facebook ads', 'meta ads', 'instagram ads', 'tiktok ads', 'linkedin ads', 'twitter ads', 'x ads',
+    'hubspot', 'hubspot marketing', 'marketo', 'pardot', 'eloqua', 'mailchimp', 'klaviyo', 'brevo', 'sendinblue', 'activecampaign', 'customer.io', 'iterable',
+    'semrush', 'ahrefs', 'moz', 'screaming frog', 'similarweb', 'spyfu',
+    'hootsuite', 'buffer', 'sprout social', 'later', 'planoly', 'socialbakers',
+    'canva', 'adobe creative suite',
+    'wordpress', 'webflow', 'unbounce', 'leadpages', 'instapage',
+    'hotjar', 'crazy egg', 'optimizely', 'vwo', 'google optimize'
+  ],
+
+  HR: [
+    'rh', 'ressources humaines', 'human resources', 'hr',
+    'drh', 'directeur des ressources humaines', 'directrice des ressources humaines', 'chro', 'chief human resources officer', 'chief hr officer',
+    'chief people officer', 'cpo', 'vp people', 'vp hr', 'vp of hr', 'vp of people', 'head of people', 'head of hr', 'people lead',
+    'hr manager', 'hr director', 'hr lead', 'human resources manager', 'human resources director',
+    'responsable rh', 'responsable ressources humaines', 'rrh',
+    'people ops', 'people operations', 'people operations manager', 'hr ops', 'hr operations',
+    'hr business partner', 'hrbp', 'senior hrbp', 'people partner', 'people business partner',
+    'hr generalist', 'hr coordinator', 'hr assistant', 'hr administrator',
+    'recruteur', 'recruteuse', 'recruiter', 'talent acquisition', 'talent acquisition manager', 'ta manager', 'head of talent acquisition', 'talent acquisition lead', 'talent acquisition specialist',
+    'sourcer', 'sourcing specialist', 'talent sourcer',
+    'technical recruiter', 'tech recruiter', 'it recruiter', 'engineering recruiter', 'product recruiter',
+    'campus recruiter', 'university recruiter', 'early careers',
+    'recruitment coordinator', 'recruiting coordinator',
+    'employer branding', 'employer brand', 'marque employeur', 'talent brand',
+    'chargé de recrutement', 'chargée de recrutement', 'responsable recrutement',
+    'formation', 'learning', 'l&d', 'learning and development', 'learning & development',
+    'training', 'training manager', 'learning manager', 'head of learning', 'talent development', 'responsable formation',
+    'instructional designer', 'learning experience designer', 'lxd',
+    'compensation', 'benefits', 'comp & ben', 'c&b', 'compensation manager', 'total rewards', 'rewards manager',
+    'payroll', 'paie', 'gestionnaire de paie', 'payroll manager', 'payroll specialist',
+    'administration du personnel', 'adp', 'hr admin',
+    'culture', 'people experience', 'employee experience', 'ex', 'employee engagement',
+    'workplace', 'workplace manager', 'workplace experience',
+    'office manager', 'office management', 'facilities', 'hospitality',
+    'diversity', 'dei', 'd&i', 'inclusion', 'belonging', 'diversity and inclusion', 'diversity equity inclusion',
+    'talent', 'talents', 'talent management', 'talent review', 'succession planning', 'career development', 'career path',
+    'performance management', 'performance review', 'appraisal', 'évaluation', 'entretien annuel', 'objectifs',
+    'onboarding', 'offboarding', 'employee onboarding', 'new hire', 'new joiner',
+    'retention', 'employee retention', 'turnover', 'attrition', 'enps',
+    'workforce planning', 'headcount', 'org design', 'organization design', 'organizational design',
+    'employee relations', 'labor relations', 'relations sociales', 'cse', 'irp',
+    'hris', 'sirh',
+    'workday', 'successfactors', 'oracle hcm', 'bamboohr', 'personio', 'hibob', 'factorial', 'payfit', 'lucca', 'silae', 'adp', 'sage hr',
+    'lever', 'greenhouse', 'ashby', 'workable', 'recruitee', 'smartrecruiters', 'jobvite', 'icims', 'talentsoft', 'cornerstone', 'welcomekit', 'welcome to the jungle',
+    'linkedin recruiter', 'indeed', 'monster', 'glassdoor',
+    '15five', 'lattice', 'culture amp', 'peakon', 'officevibe', 'leapsome', 'deel', 'remote', 'oyster', 'papaya global'
+  ],
+
+  MANAGEMENT: [
+    'ceo', 'chief executive officer', 'coo', 'chief operating officer', 'cxo',
+    'general manager', 'gm', 'country manager', 'regional manager', 'managing director', 'md',
+    'directeur général', 'directrice générale', 'dg', 'pdg', 'président', 'présidente', 'président directeur général',
+    'founder', 'fondateur', 'fondatrice', 'co-founder', 'co-fondateur', 'co-fondatrice', 'cofounder', 'cofondateur', 'cofondatrice',
+    'partner', 'associé', 'associée', 'managing partner', 'senior partner',
+    'entrepreneur', 'serial entrepreneur', 'intrapreneur',
+    'director', 'directeur', 'directrice', 'senior director',
+    'vp', 'vice president', 'vice-president', 'svp', 'senior vice president', 'evp', 'executive vice president',
+    'head of', 'responsable',
+    'leadership', 'leader', 'executive', 'executive team', 'senior leadership', 'c-suite', 'c-level',
+    'board', 'board member', 'board of directors', 'conseil d\'administration', 'administrateur', 'administratrice',
+    'comex', 'codir', 'executive committee', 'management committee', 'steering committee', 'comité de direction',
+    'p&l', 'p&l responsibility', 'profit and loss', 'business unit', 'bu', 'division',
+    'transformation', 'digital transformation', 'business transformation', 'change management', 'conduite du changement',
+    'strategy', 'stratégie', 'strategic planning', 'corporate strategy', 'business strategy'
+  ],
+
+  FINANCE: [
+    'finance', 'cfo', 'chief financial officer', 'daf', 'directeur administratif et financier', 'directrice administrative et financière', 'directeur financier', 'directrice financière',
+    'vp finance', 'vp of finance', 'head of finance', 'finance director', 'finance manager', 'responsable financier', 'responsable finance',
+    'financial controller', 'controller', 'contrôleur', 'contrôleuse', 'contrôleur de gestion', 'contrôleuse de gestion', 'contrôleur financier', 'contrôleuse financière', 'management controller',
+    'fp&a', 'fpa', 'financial planning', 'financial planning and analysis', 'fp&a manager', 'fp&a analyst', 'financial analyst', 'analyste financier', 'analyste financière', 'senior financial analyst',
+    'comptable', 'comptabilité', 'accountant', 'accounting', 'accounting manager', 'chef comptable', 'responsable comptable', 'expert comptable', 'cpa',
+    'accounts payable', 'accounts receivable', 'ap', 'ar', 'general ledger', 'gl',
+    'audit', 'auditor', 'auditeur', 'auditrice', 'internal audit', 'internal auditor', 'external audit', 'statutory auditor', 'commissaire aux comptes', 'cac', 'audit manager',
+    'trésorier', 'trésorière', 'trésorerie', 'treasury', 'treasurer', 'cash manager', 'cash management',
+    'credit manager', 'credit analyst', 'credit controller', 'recouvrement', 'collection', 'collections manager',
+    'tax', 'tax manager', 'fiscalité', 'fiscaliste', 'tax advisor', 'tax consultant',
+    'consolidation', 'consolidation manager', 'group reporting',
+    'investor relations', 'ir', 'ir manager',
+    'budget', 'budgeting', 'budgétaire', 'forecast', 'forecasting', 'prévisionnel', 'planning financier', 'financial planning',
+    'm&a', 'mergers and acquisitions', 'corporate finance', 'corporate development', 'corp dev',
+    'fundraising', 'levée de fonds', 'series a', 'series b', 'seed', 'venture capital', 'vc', 'private equity', 'pe',
+    'due diligence', 'dd', 'valuation', 'valorisation',
+    'financial statements', 'états financiers', 'bilan', 'balance sheet', 'compte de résultat', 'income statement', 'p&l statement', 'cash flow statement', 'flux de trésorerie',
+    'cash flow', 'trésorerie', 'working capital', 'bfr', 'besoin en fonds de roulement', 'dso', 'dpo', 'dio',
+    'gaap', 'ifrs', 'us gaap', 'french gaap', 'pcg',
+    'financial modeling', 'financial model', 'modélisation financière',
+    'variance analysis', 'écarts', 'monthly close', 'quarter close', 'year end close', 'clôture',
+    'ebitda', 'ebit', 'gross margin', 'marge brute', 'net margin', 'operating margin',
+    'capex', 'opex', 'roi', 'return on investment', 'irr', 'npv', 'payback',
+    'sap', 'sap fico', 'sap s/4hana', 'oracle financials', 'oracle ebs', 'netsuite', 'sage', 'sage x3', 'cegid', 'quickbooks', 'xero',
+    'anaplan', 'adaptive insights', 'planful', 'vena', 'pigment', 'cube',
+    'blackline', 'floqast', 'workiva',
+    'pennylane', 'agicap', 'kyriba', 'tipalti', 'brex', 'ramp', 'spendesk', 'pleo', 'qonto', 'revolut business'
+  ],
+
+  OPS: [
+    'operations', 'ops', 'operations manager', 'operations director', 'head of operations', 'vp operations', 'vp of operations', 'chief operating officer', 'coo', 'chief operations officer',
+    'responsable opérations', 'directeur des opérations', 'directrice des opérations',
+    'business operations', 'bizops', 'biz ops', 'business ops',
+    'strategy & operations', 'strat ops', 'stratops',
+    'revenue operations', 'revops', 'rev ops', 'go-to-market ops', 'gtm ops',
+    'sales operations', 'sales ops', 'salesops',
+    'project manager', 'chef de projet', 'project lead', 'senior project manager', 'it project manager', 'technical project manager',
+    'program manager', 'programme manager', 'program director', 'pmo', 'project management officer', 'pmo manager', 'head of pmo',
+    'delivery manager', 'engagement manager', 'client delivery', 'professional services',
+    'process manager', 'process engineer', 'process improvement', 'business process', 'bpm',
+    'amélioration continue', 'continuous improvement', 'continuous improvement manager', 'lean manager', 'lean', 'six sigma', 'lean six sigma', 'black belt', 'green belt', 'kaizen',
+    'transformation', 'transformation manager', 'transformation lead', 'change manager', 'change management', 'change lead', 'conduite du changement',
+    'supply chain', 'supply chain manager', 'supply chain director', 'head of supply chain', 'vp supply chain', 'scm',
+    'logistics', 'logistique', 'logisticien', 'logisticienne', 'logistics manager', 'logistics coordinator', 'transport', 'transportation',
+    'procurement', 'achats', 'acheteur', 'acheteuse', 'buyer', 'category manager', 'sourcing', 'sourcing manager', 'strategic sourcing', 'purchasing',
+    'warehouse', 'warehouse manager', 'inventory', 'inventory manager', 'stock', 'stock manager',
+    'facilities', 'facilities manager', 'workplace manager', 'office manager',
+    'quality', 'quality manager', 'quality assurance', 'quality control', 'qc', 'responsable qualité',
+    'compliance', 'compliance manager', 'compliance officer', 'regulatory', 'regulatory affairs',
+    'risk', 'risk manager', 'risk management', 'gestion des risques',
+    'process', 'processus', 'workflow', 'workflows', 'sop', 'standard operating procedure', 'procedure', 'procédure',
+    'efficiency', 'efficacité', 'productivity', 'productivité', 'optimization', 'optimisation',
+    'scalability', 'scale', 'scaling', 'industrialisation', 'standardisation',
+    'automation', 'automatisation', 'rpa', 'robotic process automation',
+    'sla', 'service level agreement', 'okr', 'objectives',
+    'monday', 'monday.com', 'asana', 'trello', 'airtable', 'notion', 'jira', 'confluence', 'clickup', 'smartsheet', 'wrike', 'basecamp', 'teamwork',
+    'zapier', 'make', 'integromat', 'workato', 'tray.io', 'power automate',
+    'lucidchart', 'miro', 'mural', 'whimsical', 'figjam',
+    'erp', 'sap', 'oracle', 'odoo', 'microsoft dynamics'
+  ]
+};
+
+// ===== MAIN DETECTION FUNCTION =====
 function detectCategory(text: string): string {
   let lowerText = text.toLowerCase();
 
@@ -171,328 +540,84 @@ function detectCategory(text: string): string {
     .replace(/personnes que vous pourriez connaître/gi, '')
     .replace(/de l'entreprise de/gi, '');
 
-  // ===== STEP 2: Category keywords (FR + EN, titles + tools + methodologies) =====
-  const categories: Record<string, string[]> = {
+  // ===== STEP 2: Extract title line (first line = job title from form) =====
+  const lines = lowerText.split('\n').filter(l => l.trim().length > 0);
+  const titleLine = lines[0] || '';
+  
+  // ===== STEP 3: Special handling for "PM" abbreviation =====
+  const pmInTitle = /\bpm\b/i.test(titleLine) && !/\bpm\s*(est|at|chez)\b/i.test(titleLine);
+  
+  // ===== STEP 4: Count occurrences with TITLE WEIGHTING =====
+  const scores: Record<string, number> = {};
 
-    PRODUCT: [
-      'product manager', 'chef de produit', 'product owner', 'product lead', 'product director', 'head of product', 'vp product', 'vp of product', 'chief product officer', 'cpo', 'product ops', 'product operations', 'product analyst', 'associate product manager', 'apm', 'senior product manager', 'senior pm', 'staff pm', 'group pm', 'group product manager', 'principal pm', 'principal product manager', 'product builder', 'ai product manager', 'platform product manager', 'growth pm', 'growth product manager', 'technical product manager', 'tpm',
-      'responsable produit', 'directeur produit',
-      'product management', 'product discovery', 'product delivery', 'product strategy', 'product vision', 'product roadmap', 'product backlog', 'product metrics', 'product analytics', 'product-led', 'product led growth', 'plg',
-      'roadmap', 'backlog', 'user story', 'user stories', 'epic', 'sprint planning', 'sprint review', 'sprint retrospective', 'priorisation', 'prioritization', 'discovery', 'delivery', 'opportunity solution tree', 'north star metric', 'product trio', 'dual track agile', 'continuous discovery',
-      'jobs to be done', 'jtbd', 'feature prioritization', 'impact mapping', 'story mapping', 'user story mapping', 'mvp', 'minimum viable product', 'product market fit', 'pmf', 'product specification', 'prd', 'product requirements',
-      'scrum', 'kanban', 'agile', 'safe', 'shape up', 'okr', 'objectives and key results',
-      'productboard', 'amplitude', 'mixpanel', 'pendo', 'aha', 'airfocus', 'productplan', 'roadmunk', 'canny', 'hotjar', 'fullstory', 'logrocket', 'heap', 'posthog'
-    ],
-
-    TECH: [
-      'developer', 'développeur', 'développeuse', 'dev', 'engineer', 'ingénieur', 'ingénieure', 'software engineer', 'software developer', 'swe', 'frontend developer', 'frontend engineer', 'front-end', 'front end', 'backend developer', 'backend engineer', 'back-end', 'back end', 'fullstack', 'full-stack', 'full stack', 'fullstack developer', 'fullstack engineer',
-      'devops', 'devops engineer', 'sre', 'site reliability engineer', 'platform engineer', 'infrastructure engineer', 'cloud engineer', 'data engineer', 'ml engineer', 'machine learning engineer', 'ai engineer', 'mlops', 'mlops engineer',
-      'cto', 'chief technology officer', 'chief technical officer', 'vp engineering', 'vp of engineering', 'head of engineering', 'head of tech', 'tech lead', 'technical lead', 'lead dev', 'lead developer', 'lead engineer', 'engineering manager', 'em', 'staff engineer', 'staff software engineer', 'principal engineer', 'distinguished engineer',
-      'architect', 'software architect', 'solutions architect', 'technical architect', 'enterprise architect', 'cloud architect',
-      'mobile developer', 'mobile engineer', 'ios developer', 'ios engineer', 'android developer', 'android engineer', 'react native developer', 'flutter developer',
-      'qa engineer', 'qa', 'quality assurance', 'test engineer', 'sdet', 'automation engineer',
-      'security engineer', 'cybersecurity', 'appsec', 'infosec', 'devsecops',
-      'directeur technique', 'responsable technique',
-      'python', 'javascript', 'typescript', 'java', 'golang', 'go lang', 'rust', 'ruby', 'ruby on rails', 'rails', 'php', 'laravel', 'symfony', 'c#', 'dotnet', '.net', 'c++', 'scala', 'kotlin', 'swift', 'objective-c',
-      'nodejs', 'node.js', 'react', 'reactjs', 'react.js', 'vue', 'vuejs', 'vue.js', 'angular', 'svelte', 'nextjs', 'next.js', 'nuxt', 'remix', 'express', 'fastapi', 'django', 'flask', 'spring', 'spring boot', 'nestjs',
-      'aws', 'amazon web services', 'gcp', 'google cloud', 'azure', 'kubernetes', 'k8s', 'docker', 'terraform', 'pulumi', 'ansible', 'jenkins', 'gitlab ci', 'github actions', 'circleci', 'argocd', 'helm',
-      'postgresql', 'postgres', 'mysql', 'mongodb', 'redis', 'elasticsearch', 'kafka', 'rabbitmq',
-      'codebase', 'repository', 'repo', 'git', 'github', 'gitlab', 'bitbucket', 'pull request', 'pr', 'merge request', 'code review', 'deployment', 'ci/cd', 'cicd', 'continuous integration', 'continuous deployment', 'api', 'rest api', 'graphql', 'grpc', 'microservices', 'monolith', 'architecture logicielle', 'software architecture', 'system design', 'technical debt', 'refactoring', 'scalability', 'high availability', 'distributed systems'
-    ],
-
-    DESIGN: [
-      'designer', 'ux designer', 'ui designer', 'ux/ui designer', 'ui/ux designer', 'product designer', 'senior product designer', 'staff designer', 'principal designer', 'visual designer', 'graphic designer', 'graphiste', 'web designer', 'interaction designer', 'motion designer', 'brand designer', 'communication designer',
-      'design lead', 'lead designer', 'head of design', 'design director', 'vp design', 'vp of design', 'chief design officer', 'cdo', 'design manager', 'senior designer',
-      'user researcher', 'ux researcher', 'design researcher', 'research ops', 'researchops',
-      'directeur artistique', 'da', 'creative director', 'directeur de création',
-      'service designer', 'design ops', 'designops', 'design systems lead', 'design technologist',
-      'figma', 'sketch', 'adobe xd', 'xd', 'illustrator', 'photoshop', 'indesign', 'after effects', 'premiere', 'invision', 'framer', 'principle', 'zeplin', 'abstract', 'marvel app', 'balsamiq', 'axure', 'origami', 'protopie', 'lottie',
-      'wireframe', 'wireframes', 'wireframing', 'prototype', 'prototypes', 'prototyping', 'mockup', 'mockups', 'maquette', 'maquettes',
-      'design system', 'design systems', 'design tokens', 'component library', 'ui kit', 'style guide', 'brand guidelines',
-      'user flow', 'user flows', 'user journey', 'journey map', 'journey mapping', 'experience map',
-      'persona', 'personas', 'user persona', 'empathy map', 'user testing', 'usability testing', 'usability', 'accessibility', 'a11y', 'wcag',
-      'design thinking', 'design sprint', 'atomic design', 'responsive design', 'mobile first', 'information architecture', 'ia', 'interaction design', 'visual hierarchy', 'typography', 'color theory', 'iconography'
-    ],
-
-    DATA: [
-      'data analyst', 'data scientist', 'data engineer', 'analytics engineer', 'bi analyst', 'bi developer', 'business intelligence analyst', 'business intelligence developer', 'data ops', 'dataops', 'mlops', 'ml ops',
-      'head of data', 'data lead', 'lead data', 'vp data', 'vp of data', 'chief data officer', 'cdo', 'data manager', 'data director', 'analytics manager', 'analytics director', 'head of analytics',
-      'data architect', 'data modeler', 'data governance',
-      'statisticien', 'statisticienne', 'statistician', 'quantitative analyst', 'quant',
-      'machine learning scientist', 'research scientist', 'applied scientist',
-      'analyste données', 'analyste data', 'data analyste', 'ingénieur data',
-      'sql', 'mysql', 'postgresql', 'bigquery', 'big query', 'snowflake', 'redshift', 'databricks', 'synapse',
-      'tableau', 'power bi', 'powerbi', 'looker', 'metabase', 'superset', 'qlik', 'qliksense', 'sisense', 'datastudio', 'data studio',
-      'dbt', 'fivetran', 'stitch', 'airbyte', 'airflow', 'dagster', 'prefect', 'spark', 'pyspark', 'hadoop', 'hive', 'presto', 'trino',
-      'python', 'r', 'pandas', 'numpy', 'scikit-learn', 'sklearn', 'tensorflow', 'pytorch', 'keras', 'jupyter', 'notebook',
-      'dashboard', 'dashboards', 'tableau de bord', 'reporting', 'analytics', 'analyse de données', 'data analysis', 'statistiques', 'statistics', 'modélisation', 'modeling',
-      'data viz', 'data visualization', 'visualisation de données', 'data warehouse', 'dwh', 'data lake', 'data lakehouse', 'etl', 'elt', 'data pipeline', 'data pipelines', 'data quality', 'data catalog', 'data lineage',
-      'machine learning', 'ml', 'deep learning', 'dl', 'neural network', 'nlp', 'natural language processing', 'computer vision', 'predictive', 'predictive analytics', 'segmentation', 'clustering', 'classification', 'regression', 'a/b testing', 'ab testing', 'experimentation', 'causal inference',
-      'kpi', 'kpis', 'metrics', 'métriques', 'indicateurs'
-    ],
-
-    SALES: [
-      'sales', 'sales representative', 'sales rep', 'salesperson', 'vendeur', 'vendeuse',
-      'commercial', 'commerciale', 'ingénieur commercial', 'ingénieure commerciale', 'technico-commercial', 'technico-commerciale',
-      'business developer', 'business development', 'bizdev', 'biz dev', 'bd', 'bdr', 'business development representative', 'sdr', 'sales development representative',
-      'account executive', 'ae', 'account manager', 'am', 'key account manager', 'kam', 'strategic account manager', 'sam', 'enterprise account executive', 'named account executive', 'global account manager', 'gam',
-      'sales manager', 'sales director', 'sales lead', 'vp sales', 'vp of sales', 'head of sales', 'chief sales officer', 'cso', 'chief revenue officer', 'cro', 'chief commercial officer', 'cco',
-      'regional sales manager', 'rsm', 'area sales manager', 'territory manager', 'territory sales', 'zone manager',
-      'enterprise sales', 'mid-market sales', 'smb sales', 'inside sales', 'field sales', 'outside sales',
-      'sales engineer', 'se', 'solutions engineer', 'pre-sales', 'presales', 'avant-vente', 'sales consultant', 'solutions consultant',
-      'directeur commercial', 'directrice commerciale', 'responsable commercial', 'responsable commerciale', 'responsable des ventes', 'chef des ventes',
-      'channel sales', 'partner sales', 'alliance manager', 'partner manager', 'channel manager', 'channel partner manager',
-      'closing', 'closer', 'négociation', 'negotiation', 'prospection', 'prospecting', 'cold calling', 'cold call', 'cold email', 'outbound', 'inbound sales',
-      'pipeline', 'sales pipeline', 'funnel', 'sales funnel', 'quota', 'quota attainment', 'target', 'objectifs commerciaux',
-      'revenue', 'arr', 'annual recurring revenue', 'mrr', 'monthly recurring revenue', 'bookings', 'new business', 'new logo',
-      'deal', 'deals', 'opportunity', 'opportunities', 'win rate', 'close rate', 'conversion',
-      'upsell', 'upselling', 'cross-sell', 'cross-selling', 'expansion', 'land and expand',
-      'hunting', 'hunter', 'farming', 'farmer', 'new business acquisition',
-      'sales cycle', 'cycle de vente', 'sales process', 'processus de vente', 'discovery call', 'demo', 'démonstration', 'proposal', 'proposition commerciale', 'rfp', 'rfi',
-      'meddic', 'meddicc', 'meddpicc', 'spin selling', 'spin', 'challenger sale', 'challenger', 'sandler', 'solution selling', 'value selling', 'consultative selling', 'gap selling', 'command of the message',
-      'salesforce', 'sfdc', 'hubspot', 'hubspot crm', 'pipedrive', 'zoho crm', 'dynamics', 'dynamics 365',
-      'outreach', 'salesloft', 'apollo', 'lemlist', 'instantly', 'woodpecker', 'reply.io',
-      'gong', 'chorus', 'clari', 'aviso', 'people.ai',
-      'linkedin sales navigator', 'sales navigator', 'zoominfo', 'lusha', 'cognism', 'clearbit', 'leadiq', 'seamless.ai',
-      'docusign', 'pandadoc', 'proposify', 'qwilr', 'highspot', 'seismic', 'showpad'
-    ],
-
-    CSM: [
-      'customer success', 'customer success manager', 'csm', 'senior csm', 'senior customer success manager', 'strategic csm', 'enterprise csm',
-      'client success', 'client success manager', 'customer success lead', 'customer success director', 'head of customer success', 'vp customer success', 'vp of customer success', 'chief customer officer', 'cco',
-      'customer experience', 'cx', 'cx manager', 'customer experience manager', 'head of cx', 'vp cx',
-      'client partner', 'client director', 'customer advocate', 'customer champion',
-      'customer operations', 'customer ops', 'cs ops', 'csm ops',
-      'customer onboarding', 'onboarding manager', 'onboarding specialist', 'implementation manager', 'implementation consultant', 'implementation specialist',
-      'customer support manager', 'support manager', 'head of support',
-      'customer marketing', 'customer advocacy', 'customer community',
-      'responsable relation client', 'responsable succès client', 'responsable de la satisfaction client', 'chargé de clientèle', 'gestionnaire de compte client',
-      'onboarding', 'onboarding client', 'client onboarding', 'customer onboarding', 'time to value', 'ttv', 'time to first value', 'implementation',
-      'adoption', 'product adoption', 'user adoption', 'feature adoption', 'adoption rate',
-      'retention', 'customer retention', 'client retention', 'gross retention', 'net retention', 'nrr', 'net revenue retention', 'grr', 'gross revenue retention', 'logo retention',
-      'churn', 'churn rate', 'customer churn', 'revenue churn', 'churn prevention', 'churn prediction', 'at-risk', 'at risk',
-      'nps', 'net promoter score', 'csat', 'customer satisfaction', 'ces', 'customer effort score',
-      'health score', 'customer health', 'health scoring', 'customer health score',
-      'qbr', 'quarterly business review', 'ebr', 'executive business review', 'business review',
-      'renewal', 'renewals', 'renewal rate', 'renouvellement', 'contract renewal',
-      'expansion', 'expansion revenue', 'upsell', 'cross-sell',
-      'customer journey', 'customer lifecycle', 'lifecycle', 'customer touchpoint', 'touchpoints',
-      'voice of customer', 'voc', 'customer feedback', 'feedback client', 'customer insights',
-      'success plan', 'success planning', 'mutual success plan', 'joint success plan',
-      'customer advocacy', 'customer reference', 'case study', 'testimonial',
-      'gainsight', 'totango', 'churnzero', 'vitally', 'planhat', 'custify', 'catalyst', 'strikedeck',
-      'intercom', 'zendesk', 'freshdesk', 'helpscout', 'front', 'kustomer', 'gladly', 'dixa',
-      'pendo', 'appcues', 'userpilot', 'chameleon', 'userguiding', 'whatfix',
-      'delighted', 'medallia', 'qualtrics', 'surveymonkey', 'typeform'
-    ],
-
-    MARKETING: [
-      'marketing', 'marketer', 'marketeur', 'marketeuse',
-      'marketing manager', 'marketing director', 'head of marketing', 'vp marketing', 'vp of marketing', 'cmo', 'chief marketing officer',
-      'responsable marketing', 'directeur marketing', 'directrice marketing',
-      'growth', 'growth hacker', 'growth marketer', 'growth manager', 'head of growth', 'vp growth', 'growth lead',
-      'acquisition', 'acquisition manager', 'user acquisition', 'ua manager', 'paid acquisition',
-      'performance marketing', 'performance marketer', 'paid media', 'paid media manager',
-      'seo', 'seo manager', 'seo specialist', 'seo consultant', 'head of seo',
-      'sea', 'sem', 'sem manager', 'ppc', 'ppc manager', 'ppc specialist',
-      'digital marketing', 'digital marketer', 'digital marketing manager', 'online marketing',
-      'content', 'content manager', 'content strategist', 'content marketing', 'content marketing manager', 'head of content', 'content lead', 'content writer', 'copywriter', 'rédacteur', 'rédactrice',
-      'social media', 'social media manager', 'smm', 'community manager', 'cm', 'community lead',
-      'brand', 'brand manager', 'brand director', 'brand marketing', 'head of brand', 'brand strategist',
-      'pr', 'public relations', 'pr manager', 'communications', 'communication manager', 'corporate communications', 'chargé de communication', 'chargée de communication', 'responsable communication', 'directeur communication',
-      'demand generation', 'demand gen', 'demandgen', 'head of demand gen',
-      'product marketing', 'product marketing manager', 'pmm', 'senior pmm', 'head of product marketing', 'product marketing director',
-      'field marketing', 'event marketing', 'events manager', 'event manager',
-      'partner marketing', 'channel marketing', 'co-marketing',
-      'lifecycle marketing', 'crm marketing', 'crm manager', 'email marketing', 'email marketer',
-      'marketing ops', 'marketing operations', 'mops', 'revops', 'revenue operations',
-      'analyst marketing', 'marketing analyst',
-      'seo', 'sea', 'sem', 'ppc', 'cpc', 'cpm', 'cpa', 'cac', 'customer acquisition cost', 'ltv', 'lifetime value', 'roas', 'return on ad spend', 'roi',
-      'organic', 'paid', 'organic traffic', 'paid traffic', 'organic search', 'paid search',
-      'campaign', 'campaigns', 'campagne', 'campagnes', 'campaign management',
-      'funnel', 'marketing funnel', 'conversion funnel', 'lead generation', 'leadgen', 'lead gen', 'lead magnet', 'landing page', 'landing pages', 'lp',
-      'mql', 'marketing qualified lead', 'sql', 'sales qualified lead', 'lead scoring', 'lead nurturing', 'nurturing',
-      'conversion', 'conversion rate', 'cro', 'conversion rate optimization', 'ab testing', 'a/b testing', 'split testing',
-      'copywriting', 'copy', 'messaging', 'positioning', 'value proposition',
-      'branding', 'brand awareness', 'awareness', 'consideration', 'top of funnel', 'tofu', 'mofu', 'bofu',
-      'engagement', 'engagement rate', 'reach', 'impressions', 'clicks', 'ctr', 'click through rate',
-      'inbound marketing', 'outbound marketing', 'content strategy', 'editorial calendar', 'content calendar',
-      'influencer', 'influencer marketing', 'creator', 'ugc', 'user generated content',
-      'viral', 'virality', 'word of mouth', 'referral', 'referral marketing',
-      'google analytics', 'ga4', 'google ads', 'google tag manager', 'gtm',
-      'facebook ads', 'meta ads', 'instagram ads', 'tiktok ads', 'linkedin ads', 'twitter ads', 'x ads',
-      'hubspot', 'hubspot marketing', 'marketo', 'pardot', 'eloqua', 'mailchimp', 'klaviyo', 'brevo', 'sendinblue', 'activecampaign', 'customer.io', 'iterable',
-      'semrush', 'ahrefs', 'moz', 'screaming frog', 'similarweb', 'spyfu',
-      'hootsuite', 'buffer', 'sprout social', 'later', 'planoly', 'socialbakers',
-      'canva', 'adobe creative suite', 'figma',
-      'wordpress', 'webflow', 'unbounce', 'leadpages', 'instapage',
-      'hotjar', 'crazy egg', 'optimizely', 'vwo', 'google optimize'
-    ],
-
-    HR: [
-      'rh', 'ressources humaines', 'human resources', 'hr',
-      'drh', 'directeur des ressources humaines', 'directrice des ressources humaines', 'chro', 'chief human resources officer', 'chief hr officer',
-      'chief people officer', 'cpo', 'vp people', 'vp hr', 'vp of hr', 'vp of people', 'head of people', 'head of hr', 'people lead',
-      'hr manager', 'hr director', 'hr lead', 'human resources manager', 'human resources director',
-      'responsable rh', 'responsable ressources humaines', 'rrh',
-      'people ops', 'people operations', 'people operations manager', 'hr ops', 'hr operations',
-      'hr business partner', 'hrbp', 'senior hrbp', 'people partner', 'people business partner',
-      'hr generalist', 'hr coordinator', 'hr assistant', 'hr administrator',
-      'recruteur', 'recruteuse', 'recruiter', 'talent acquisition', 'talent acquisition manager', 'ta manager', 'head of talent acquisition', 'talent acquisition lead', 'talent acquisition specialist',
-      'sourcer', 'sourcing specialist', 'talent sourcer',
-      'technical recruiter', 'tech recruiter', 'it recruiter', 'engineering recruiter', 'product recruiter',
-      'campus recruiter', 'university recruiter', 'early careers',
-      'recruitment coordinator', 'recruiting coordinator',
-      'employer branding', 'employer brand', 'marque employeur', 'talent brand',
-      'chargé de recrutement', 'chargée de recrutement', 'responsable recrutement',
-      'formation', 'learning', 'l&d', 'learning and development', 'learning & development',
-      'training', 'training manager', 'learning manager', 'head of learning', 'talent development', 'responsable formation',
-      'instructional designer', 'learning experience designer', 'lxd',
-      'compensation', 'benefits', 'comp & ben', 'c&b', 'compensation manager', 'total rewards', 'rewards manager',
-      'payroll', 'paie', 'gestionnaire de paie', 'payroll manager', 'payroll specialist',
-      'administration du personnel', 'adp', 'hr admin',
-      'culture', 'people experience', 'employee experience', 'ex', 'engagement', 'employee engagement',
-      'workplace', 'workplace manager', 'workplace experience',
-      'office manager', 'office management', 'facilities', 'hospitality',
-      'diversity', 'dei', 'd&i', 'inclusion', 'belonging', 'diversity and inclusion', 'diversity equity inclusion',
-      'talent', 'talents', 'talent management', 'talent review', 'succession planning', 'career development', 'career path',
-      'performance management', 'performance review', 'appraisal', 'évaluation', 'entretien annuel', 'objectifs',
-      'onboarding', 'offboarding', 'employee onboarding', 'new hire', 'new joiner',
-      'retention', 'employee retention', 'turnover', 'attrition', 'eNPS',
-      'workforce planning', 'headcount', 'org design', 'organization design', 'organizational design',
-      'employee relations', 'labor relations', 'relations sociales', 'cse', 'irp',
-      'hris', 'sirh',
-      'workday', 'successfactors', 'oracle hcm', 'bamboohr', 'personio', 'hibob', 'factorial', 'payfit', 'lucca', 'silae', 'adp', 'sage hr',
-      'lever', 'greenhouse', 'ashby', 'workable', 'recruitee', 'smartrecruiters', 'jobvite', 'icims', 'talentsoft', 'cornerstone', 'welcomekit', 'welcome to the jungle',
-      'linkedin recruiter', 'indeed', 'monster', 'glassdoor',
-      '15five', 'lattice', 'culture amp', 'peakon', 'officevibe', 'leapsome', 'deel', 'remote', 'oyster', 'papaya global'
-    ],
-
-    MANAGEMENT: [
-      'ceo', 'chief executive officer', 'coo', 'chief operating officer', 'cxo',
-      'general manager', 'gm', 'country manager', 'regional manager', 'managing director', 'md',
-      'directeur général', 'directrice générale', 'dg', 'pdg', 'président', 'présidente', 'président directeur général',
-      'founder', 'fondateur', 'fondatrice', 'co-founder', 'co-fondateur', 'co-fondatrice', 'cofounder', 'cofondateur', 'cofondatrice',
-      'partner', 'associé', 'associée', 'managing partner', 'senior partner',
-      'entrepreneur', 'serial entrepreneur', 'intrapreneur',
-      'director', 'directeur', 'directrice', 'senior director',
-      'vp', 'vice president', 'vice-president', 'svp', 'senior vice president', 'evp', 'executive vice president',
-      'head of', 'responsable',
-      'leadership', 'leader', 'executive', 'executive team', 'senior leadership', 'c-suite', 'c-level',
-      'board', 'board member', 'board of directors', 'conseil d\'administration', 'administrateur', 'administratrice',
-      'comex', 'codir', 'executive committee', 'management committee', 'steering committee', 'comité de direction',
-      'p&l', 'p&l responsibility', 'profit and loss', 'business unit', 'bu', 'division',
-      'transformation', 'digital transformation', 'business transformation', 'change management', 'conduite du changement',
-      'strategy', 'stratégie', 'strategic planning', 'corporate strategy', 'business strategy'
-    ],
-
-    FINANCE: [
-      'finance', 'cfo', 'chief financial officer', 'daf', 'directeur administratif et financier', 'directrice administrative et financière', 'directeur financier', 'directrice financière',
-      'vp finance', 'vp of finance', 'head of finance', 'finance director', 'finance manager', 'responsable financier', 'responsable finance',
-      'financial controller', 'controller', 'contrôleur', 'contrôleuse', 'contrôleur de gestion', 'contrôleuse de gestion', 'contrôleur financier', 'contrôleuse financière', 'management controller',
-      'fp&a', 'fpa', 'financial planning', 'financial planning and analysis', 'fp&a manager', 'fp&a analyst', 'financial analyst', 'analyste financier', 'analyste financière', 'senior financial analyst',
-      'comptable', 'comptabilité', 'accountant', 'accounting', 'accounting manager', 'chef comptable', 'responsable comptable', 'expert comptable', 'cpa',
-      'accounting', 'accounts payable', 'accounts receivable', 'ap', 'ar', 'general ledger', 'gl',
-      'audit', 'auditor', 'auditeur', 'auditrice', 'internal audit', 'internal auditor', 'external audit', 'statutory auditor', 'commissaire aux comptes', 'cac', 'audit manager',
-      'trésorier', 'trésorière', 'trésorerie', 'treasury', 'treasurer', 'cash manager', 'cash management',
-      'credit manager', 'credit analyst', 'credit controller', 'recouvrement', 'collection', 'collections manager',
-      'tax', 'tax manager', 'fiscalité', 'fiscaliste', 'tax advisor', 'tax consultant',
-      'consolidation', 'consolidation manager', 'group reporting',
-      'investor relations', 'ir', 'ir manager',
-      'budget', 'budgeting', 'budgétaire', 'forecast', 'forecasting', 'prévisionnel', 'planning financier', 'financial planning',
-      'm&a', 'mergers and acquisitions', 'corporate finance', 'corporate development', 'corp dev',
-      'fundraising', 'levée de fonds', 'series a', 'series b', 'seed', 'venture capital', 'vc', 'private equity', 'pe',
-      'due diligence', 'dd', 'valuation', 'valorisation',
-      'financial statements', 'états financiers', 'bilan', 'balance sheet', 'compte de résultat', 'income statement', 'p&l statement', 'cash flow statement', 'flux de trésorerie',
-      'cash flow', 'trésorerie', 'working capital', 'bfr', 'besoin en fonds de roulement', 'dso', 'dpo', 'dio',
-      'gaap', 'ifrs', 'us gaap', 'french gaap', 'pcg',
-      'financial modeling', 'financial model', 'modélisation financière',
-      'variance analysis', 'écarts', 'monthly close', 'quarter close', 'year end close', 'clôture',
-      'ebitda', 'ebit', 'gross margin', 'marge brute', 'net margin', 'operating margin',
-      'capex', 'opex', 'roi', 'return on investment', 'irr', 'npv', 'payback',
-      'sap', 'sap fico', 'sap s/4hana', 'oracle financials', 'oracle ebs', 'netsuite', 'sage', 'sage x3', 'cegid', 'quickbooks', 'xero',
-      'anaplan', 'adaptive insights', 'planful', 'vena', 'pigment', 'cube',
-      'blackline', 'floqast', 'workiva',
-      'pennylane', 'agicap', 'kyriba', 'tipalti', 'brex', 'ramp', 'spendesk', 'pleo', 'qonto', 'revolut business'
-    ],
-
-    OPS: [
-      'operations', 'ops', 'operations manager', 'operations director', 'head of operations', 'vp operations', 'vp of operations', 'chief operating officer', 'coo', 'chief operations officer',
-      'responsable opérations', 'directeur des opérations', 'directrice des opérations',
-      'business operations', 'bizops', 'biz ops', 'business ops',
-      'strategy & operations', 'strat ops', 'stratops',
-      'revenue operations', 'revops', 'rev ops', 'go-to-market ops', 'gtm ops',
-      'sales operations', 'sales ops', 'salesops',
-      'project manager', 'chef de projet', 'project lead', 'senior project manager', 'it project manager', 'technical project manager',
-      'program manager', 'programme manager', 'program director', 'pmo', 'project management officer', 'pmo manager', 'head of pmo',
-      'delivery manager', 'engagement manager', 'client delivery', 'professional services',
-      'process manager', 'process engineer', 'process improvement', 'business process', 'bpm',
-      'amélioration continue', 'continuous improvement', 'continuous improvement manager', 'lean manager', 'lean', 'six sigma', 'lean six sigma', 'black belt', 'green belt', 'kaizen',
-      'transformation', 'transformation manager', 'transformation lead', 'change manager', 'change management', 'change lead', 'conduite du changement',
-      'supply chain', 'supply chain manager', 'supply chain director', 'head of supply chain', 'vp supply chain', 'scm',
-      'logistics', 'logistique', 'logisticien', 'logisticienne', 'logistics manager', 'logistics coordinator', 'transport', 'transportation',
-      'procurement', 'achats', 'acheteur', 'acheteuse', 'buyer', 'category manager', 'sourcing', 'sourcing manager', 'strategic sourcing', 'purchasing',
-      'warehouse', 'warehouse manager', 'inventory', 'inventory manager', 'stock', 'stock manager',
-      'facilities', 'facilities manager', 'workplace manager', 'office manager',
-      'quality', 'quality manager', 'quality assurance', 'quality control', 'qc', 'responsable qualité',
-      'compliance', 'compliance manager', 'compliance officer', 'regulatory', 'regulatory affairs',
-      'risk', 'risk manager', 'risk management', 'gestion des risques',
-      'process', 'processus', 'workflow', 'workflows', 'sop', 'standard operating procedure', 'procedure', 'procédure',
-      'kpi', 'kpis', 'metrics', 'dashboards', 'reporting',
-      'efficiency', 'efficacité', 'productivity', 'productivité', 'optimization', 'optimisation',
-      'scalability', 'scale', 'scaling', 'industrialisation', 'standardisation',
-      'automation', 'automatisation', 'rpa', 'robotic process automation',
-      'sla', 'service level agreement', 'okr', 'objectives',
-      'monday', 'monday.com', 'asana', 'trello', 'airtable', 'notion', 'jira', 'confluence', 'clickup', 'smartsheet', 'wrike', 'basecamp', 'teamwork',
-      'zapier', 'make', 'integromat', 'workato', 'tray.io', 'power automate',
-      'lucidchart', 'miro', 'mural', 'whimsical', 'figjam',
-      'erp', 'sap', 'oracle', 'odoo', 'microsoft dynamics'
-    ]
-  };
-
-  // ===== STEP 3: Count occurrences for each category =====
-  let maxCount = 0;
-  let bestCategory = 'DEFAULT';
-
-  for (const [category, keywords] of Object.entries(categories)) {
-    let count = 0;
+  for (const [category, keywords] of Object.entries(CATEGORIES)) {
+    let score = 0;
+    
     for (const keyword of keywords) {
-      // Escape special regex characters
       const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      // Use word boundaries for exact matching
       const regex = new RegExp('\\b' + escaped + '\\b', 'gi');
-      const matches = lowerText.match(regex);
-      if (matches) {
-        count += matches.length;
+      
+      // Count in title (x5 weight) — this is the job title field
+      const titleMatches = titleLine.match(regex);
+      if (titleMatches) {
+        score += titleMatches.length * 5;
+      }
+      
+      // Count in full text (x1 weight)
+      const fullMatches = lowerText.match(regex);
+      if (fullMatches) {
+        score += fullMatches.length;
       }
     }
-    if (count > maxCount) {
-      maxCount = count;
+    
+    scores[category] = score;
+  }
+
+  // ===== STEP 5: Apply PM boost if detected in title =====
+  if (pmInTitle) {
+    scores['PRODUCT'] = (scores['PRODUCT'] || 0) + 15;
+  }
+
+  // ===== STEP 6: Find best category =====
+  let bestCategory = 'DEFAULT';
+  let maxScore = 0;
+
+  for (const [category, score] of Object.entries(scores)) {
+    if (score > maxScore) {
+      maxScore = score;
       bestCategory = category;
     }
   }
 
-  // ===== STEP 4: Return result =====
+  // ===== STEP 7: Tiebreaker for priority categories =====
+  const productScore = scores['PRODUCT'] || 0;
+  if (bestCategory !== 'PRODUCT' && productScore > 0) {
+    if (['MANAGEMENT', 'OPS', 'DEFAULT'].includes(bestCategory)) {
+      if (productScore >= maxScore * 0.8) {
+        bestCategory = 'PRODUCT';
+      }
+    }
+  }
+
   return bestCategory;
 }
 
 function detectCurrentJob(text: string, category: string): string {
   const jobPatterns: Record<string, string[]> = {
-    PRODUCT: ["Product Manager", "Product Owner", "Chef de Produit", "Scrum Master"],
-    TECH: ["Développeur", "Software Engineer", "Tech Lead", "CTO", "DevOps Engineer"],
-    DESIGN: ["Designer", "UX Designer", "UI Designer", "Directeur Artistique", "Creative Director"],
-    DATA: ["Data Analyst", "Data Scientist", "Data Engineer", "Business Analyst"],
-    SALES: ["Commercial", "Account Executive", "Business Developer", "Sales Manager"],
-    MARKETING: ["Marketing Manager", "Growth Hacker", "Content Manager", "Community Manager"],
-    HR: ["Responsable RH", "Talent Acquisition", "DRH", "Recruiter"],
-    MANAGEMENT: ["Directeur", "Manager", "Head of", "VP", "CEO"],
-    FINANCE: ["DAF", "Contrôleur de gestion", "Comptable", "Finance Manager", "Trésorier"],
-    OPS: ["Operations Manager", "Supply Chain Manager", "Responsable Ops", "Chef de projet", "Process Manager"],
+    PRODUCT: ["Product Manager", "Product Owner", "Chef de Produit", "PM", "CPO", "Head of Product", "VP Product"],
+    TECH: ["Développeur", "Software Engineer", "Tech Lead", "CTO", "DevOps Engineer", "Engineer", "Developer"],
+    DESIGN: ["Designer", "UX Designer", "UI Designer", "Product Designer", "Directeur Artistique", "Creative Director"],
+    DATA: ["Data Analyst", "Data Scientist", "Data Engineer", "Analytics Engineer", "BI Analyst"],
+    SALES: ["Commercial", "Account Executive", "Business Developer", "Sales Manager", "SDR", "AE"],
+    MARKETING: ["Marketing Manager", "Growth Manager", "Content Manager", "Community Manager", "CMO", "Head of Marketing"],
+    HR: ["Responsable RH", "Talent Acquisition", "DRH", "Recruiter", "HRBP", "People Partner"],
+    MANAGEMENT: ["Directeur", "Manager", "Head of", "VP", "CEO", "COO", "Founder"],
+    FINANCE: ["DAF", "Contrôleur de gestion", "Comptable", "Finance Manager", "CFO", "Trésorier"],
+    OPS: ["Operations Manager", "Supply Chain Manager", "Responsable Ops", "Chef de projet", "Process Manager", "COO"],
     CSM: ["Customer Success Manager", "CSM", "Account Manager", "Client Partner", "Responsable Client"],
     DEFAULT: ["Professionnel·le polyvalent·e"],
   };
 
-  // Try to find an actual job title in the text
   const lower = text.toLowerCase();
   const candidates = jobPatterns[category] || jobPatterns.DEFAULT;
   for (const job of candidates) {
@@ -526,9 +651,9 @@ ${job.description}
 
 Ce futur est incroyable, et tu ne pourras pas dire que tu n'étais pas au courant.`;
 
-  const shareText = `🔮 Je viens de découvrir mon job en 2042 grâce à Loan... Apparemment, en 2042 je serai ${futureJob} ! ${job.description} Découvre ton futur job ici : https://loan.nanocorp.app #2042 #FuturJob #IA`;
+  const shareText = `🔮 Je viens de découvrir mon job en 2042 grâce à Loan... Apparemment, en 2042 je serai ${futureJob} ! ${job.description} Découvre ton futur job ici : https://loan-rho-two.vercel.app #2042 #FuturJob`;
 
-  const slackText = `🔮 Selon Loan (qui revient de 2042), mon futur job sera : *${futureJob}* ! Teste le tien → https://loan.nanocorp.app`;
+  const slackText = `🔮 Selon Loan (qui revient de 2042), mon futur job sera : *${futureJob}* ! Teste le tien → https://loan-rho-two.vercel.app`;
 
   return {
     currentJob,
@@ -536,25 +661,26 @@ Ce futur est incroyable, et tu ne pourras pas dire que tu n'étais pas au couran
     fullText,
     shareText,
     slackText,
+    category,
   };
 }
 
 export async function POST(request: NextRequest) {
-  console.log("[predict] Algorithmic endpoint v2 hit");
+  console.log("[predict] Algorithmic endpoint v5-newform hit");
   try {
     const body = await request.json();
-    const { prenom, email, localisation, profileText, likes, dislikes } = body;
+    const { prenom, email, linkedinUrl, profileText } = body;
 
     if (!prenom || !email || !profileText) {
       return NextResponse.json(
-        { error: "Prénom, email et texte de profil sont requis" },
+        { error: "Prénom, email et titre de poste sont requis" },
         { status: 400 }
       );
     }
 
     const result = generatePrediction(prenom, profileText);
 
-    // Save to database (non-blocking, dynamic import to avoid module-level failures)
+    // Save to database (non-blocking)
     try {
       const { default: pool } = await import("@/lib/db");
       await pool.query(
@@ -563,13 +689,13 @@ export async function POST(request: NextRequest) {
         [
           prenom,
           email,
-          localisation || null,
+          linkedinUrl || null, // Store LinkedIn URL in localisation field for now
           profileText,
-          likes || null,
-          dislikes || null,
+          null,
+          null,
           result.currentJob,
           result.futureJob,
-          JSON.stringify(result),
+          JSON.stringify({ ...result, linkedinUrl }),
         ]
       );
     } catch (dbError) {
@@ -583,7 +709,8 @@ export async function POST(request: NextRequest) {
       fullText: result.fullText,
       shareText: result.shareText,
       slackText: result.slackText,
-      version: "v3-jobbank60",
+      category: result.category,
+      version: "v5-newform",
     });
   } catch (error) {
     console.error("Prediction error:", error);
