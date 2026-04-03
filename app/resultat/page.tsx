@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import TransmissionFeed from "@/components/TransmissionFeed";
 
 interface Prediction {
   prenom: string;
@@ -96,8 +97,11 @@ export default function ResultPage() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="text-center">
+        {/* TRANSMISSION FEED - LIVE TERMINAL */}
+        <TransmissionFeed />
+
+        {/* Recommencer */}
+        <div className="text-center mt-8">
           <button
             onClick={() => {
               sessionStorage.removeItem("prediction");
