@@ -1,118 +1,293 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import TransmissionFeed from "../components/TransmissionFeed";
+import TransmissionFeed from "./components/TransmissionFeed";
 
-interface Prediction {
-  prenom: string;
-  currentJob: string;
-  futureJob: string;
-  fullText: string;
-  shareText: string;
-  slackText: string;
-}
+const LOADING_MESSAGES = [
+  "Loan consulte les archives de 2042...",
+  "Analyse de ton profil en cours...",
+  "Connexion aux bases de données du futur...",
+  "Calcul de ta trajectoire professionnelle...",
+  "Vérification de ton salaire en 2042...",
+  "Loan négocie avec ton futur manager...",
+  "Synchronisation temporelle en cours...",
+  "Résultat imminent...",
+];
 
-export default function ResultPage() {
+export default function Home() {
   const router = useRouter();
-  const [prediction, setPrediction] = useState<Prediction | null>(null);
-  const [copied, setCopied] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    prenom: "",
+    email: "",
+    linkedinUrl: "",
+    jobTitle: "",
+    profileText: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState(LOADING_MESSAGES[0]);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [error, setError] = useState("");
+  const [showOptional, setShowOptional] = useState(false);
 
-  useEffect(() => {
-    const stored = sessionStorage.getItem("prediction");
-    if (!stored) {
-      router.push("/");
-      return;
-    }
-    setPrediction(JSON.parse(stored));
-  }, [router]);
-
-  const copyToClipboard = async (text: string, label: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopied(label);
-    setTimeout(() => setCopied(null), 2000);
+  // Validate LinkedIn URL format
+  const isValidLinkedInUrl = (url: string) => {
+    if (!url) return true; // Empty is handled by required
+    return /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[\w-]+\/?$/i.test(url);
   };
 
-  if (!prediction) {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate LinkedIn URL
+    if (!isValidLinkedInUrl(formData.linkedinUrl)) {
+      setError("L'URL LinkedIn n'est pas valide. Elle doit ressembler à : linkedin.com/in/ton-profil");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setLoadingProgress(0);
+
+    // Theatrical loader: cycle messages + progress bar
+    let msgIndex = 0;
+    const totalDuration = 4000; // 4 seconds of theatre
+    const intervalTime = 500;
+    let elapsed = 0;
+
+    const interval = setInterval(() => {
+      elapsed += intervalTime;
+      setLoadingProgress(Math.min((elapsed / totalDuration) * 100, 95));
+      
+      if (elapsed % 1000 === 0) {
+        msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
+        setLoadingMsg(LOADING_MESSAGES[msgIndex]);
+      }
+    }, intervalTime);
+
+    // Wait for theatrical minimum before showing result
+    const theatrePromise = new Promise(resolve => setTimeout(resolve, totalDuration));
+
+    try {
+      // Combine jobTitle + profileText for the API
+      // The title goes first (will be weighted x5 by the algo)
+      const combinedProfile = formData.jobTitle + "\n\n" + (formData.profileText || "");
+
+      const [res] = await Promise.all([
+        fetch("/api/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prenom: formData.prenom,
+            email: formData.email,
+            linkedinUrl: formData.linkedinUrl,
+            profileText: combinedProfile,
+          }),
+        }),
+        theatrePromise, // Wait for theatre to complete
+      ]);
+
+      setLoadingProgress(100);
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Erreur serveur");
+      }
+
+      const result = await res.json();
+      sessionStorage.setItem("prediction", JSON.stringify(result));
+      router.push("/resultat");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Une erreur est survenue. Réessaie !"
+      );
+    } finally {
+      clearInterval(interval);
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-zinc-500">Chargement...</div>
+      <div className="flex flex-col items-center justify-center min-h-screen px-6">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-8 animate-float">🔮</div>
+          <h2 className="text-2xl font-bold mb-4 shimmer-text">
+            {loadingMsg}
+          </h2>
+          
+          {/* Progress bar */}
+          <div className="w-full bg-[var(--card-bg)] rounded-full h-2 mb-6 overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-light)] transition-all duration-300 ease-out"
+              style={{ width: `${loadingProgress}%` }}
+            />
+          </div>
+
+          <div className="flex justify-center gap-1.5">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="w-3 h-3 rounded-full bg-[var(--accent)]"
+                style={{
+                  animation: `pulse-glow 1.4s ease-in-out ${i * 0.2}s infinite`,
+                }}
+              />
+            ))}
+          </div>
+          <p className="text-sm text-zinc-500 mt-6">
+            Loan analyse ton profil depuis 2042...
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col items-center min-h-screen px-4 py-12">
-      <div className="w-full max-w-2xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="text-5xl mb-3">🔮</div>
-          <h1 className="text-2xl font-bold mb-1">
-            {prediction.prenom}, voici ton futur !
-          </h1>
-          <p className="text-[var(--accent-light)] font-semibold text-lg">
-            {prediction.futureJob}
+      {/* Hero */}
+      <div className="text-center max-w-2xl mb-10">
+        <div className="text-5xl mb-4">🔮</div>
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
+          <span className="shimmer-text">2042</span>
+        </h1>
+        <p className="text-lg text-zinc-400 leading-relaxed">
+          Loan revient de 2042 et a vu ton futur job.
+          <br />
+          <span className="text-zinc-500">30 secondes pour découvrir ce qui t&apos;attend.</span>
+        </p>
+      </div>
+
+      {/* TRANSMISSION FEED - LIVE TERMINAL */}
+      <TransmissionFeed />
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-5 mt-10">
+        {/* Row 1: Prénom + Email */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+              Prénom *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.prenom}
+              onChange={(e) =>
+                setFormData({ ...formData, prenom: e.target.value })
+              }
+              className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+              placeholder="Ton prénom"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+              Email *
+            </label>
+            <input
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+              placeholder="ton@email.com"
+            />
+          </div>
+        </div>
+
+        {/* LinkedIn URL */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+            Ton profil LinkedIn *
+          </label>
+          <input
+            type="url"
+            required
+            value={formData.linkedinUrl}
+            onChange={(e) =>
+              setFormData({ ...formData, linkedinUrl: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+            placeholder="linkedin.com/in/ton-profil"
+          />
+          <p className="text-xs text-zinc-600 mt-1">
+            Loan a besoin de ton profil pour voyager dans le temps.
           </p>
         </div>
 
-        {/* Main result card */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-[var(--card-bg)] border border-[var(--card-border)] mb-8">
-          <div className="whitespace-pre-wrap text-zinc-300 leading-relaxed text-[15px]">
-            {prediction.fullText}
-          </div>
+        {/* Job Title - THE KEY INPUT */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+            Ton titre de poste LinkedIn *
+          </label>
+          <input
+            type="text"
+            required
+            value={formData.jobTitle}
+            onChange={(e) =>
+              setFormData({ ...formData, jobTitle: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+            placeholder="Ex: Product Manager @ MerciYanis | B2B SaaS"
+          />
+          <p className="text-xs text-zinc-600 mt-1">
+            C&apos;est la ligne juste en dessous de ton nom sur LinkedIn. Copie-la telle quelle !
+          </p>
         </div>
 
-        {/* Share buttons */}
-        <div className="space-y-3 mb-8">
-          <h3 className="text-sm font-medium text-zinc-500 uppercase tracking-wider">
-            Partager ton résultat
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button
-              onClick={() =>
-                copyToClipboard(prediction.shareText, "linkedin")
-              }
-              className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#0077B5]/10 border border-[#0077B5]/20 text-[#0077B5] hover:bg-[#0077B5]/20 transition cursor-pointer"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-              </svg>
-              {copied === "linkedin"
-                ? "Copié !"
-                : "Copier le post LinkedIn"}
-            </button>
-            <button
-              onClick={() =>
-                copyToClipboard(prediction.slackText, "slack")
-              }
-              className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#4A154B]/10 border border-[#4A154B]/30 text-[#E01E5A] hover:bg-[#4A154B]/20 transition cursor-pointer"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" />
-              </svg>
-              {copied === "slack"
-                ? "Copié !"
-                : "Copier le message Slack"}
-            </button>
-          </div>
-        </div>
-
-        {/* TRANSMISSION FEED - LIVE TERMINAL */}
-        <TransmissionFeed />
-
-        {/* Recommencer */}
-        <div className="text-center mt-8">
+        {/* Optional: Full profile */}
+        <div className="pt-2">
           <button
-            onClick={() => {
-              sessionStorage.removeItem("prediction");
-              router.push("/");
-            }}
-            className="px-6 py-3 rounded-xl border border-[var(--card-border)] text-zinc-400 hover:text-white hover:border-[var(--accent)] transition cursor-pointer"
+            type="button"
+            onClick={() => setShowOptional(!showOptional)}
+            className="text-sm text-[var(--accent-light)] hover:underline flex items-center gap-1"
           >
-            Recommencer avec un autre profil
+            <span>{showOptional ? "−" : "+"}</span>
+            <span>Ajouter plus d&apos;infos pour un résultat encore plus précis</span>
           </button>
         </div>
-      </div>
+
+        {showOptional && (
+          <div className="space-y-2 animate-in fade-in duration-200">
+            <label className="block text-sm font-medium text-zinc-400">
+              Ton profil complet (facultatif)
+            </label>
+            <textarea
+              rows={5}
+              value={formData.profileText}
+              onChange={(e) =>
+                setFormData({ ...formData, profileText: e.target.value })
+              }
+              className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition resize-y"
+              placeholder="Pour un résultat ultra-personnalisé : va sur ton profil LinkedIn, fais Cmd+A (ou Ctrl+A) pour tout sélectionner, puis colle ici."
+            />
+            <p className="text-xs text-zinc-600">
+              💡 Astuce : Sur ta page LinkedIn, fais <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">A</kbd> puis <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">C</kbd> pour tout copier.
+            </p>
+          </div>
+        )}
+
+        {error && (
+          <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          className="w-full py-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-light)] text-white font-semibold text-lg transition-all hover:shadow-[0_0_30px_var(--accent-glow)] cursor-pointer"
+        >
+          🔮 Découvrir mon job en 2042
+        </button>
+
+        <p className="text-xs text-zinc-600 text-center">
+          Loan ne stocke rien de méchant. Juste ce qu&apos;il faut pour voyager dans le temps.
+        </p>
+      </form>
     </div>
   );
 }
