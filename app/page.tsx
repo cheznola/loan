@@ -6,9 +6,12 @@ import { useRouter } from "next/navigation";
 const LOADING_MESSAGES = [
   "Loan consulte les archives de 2042...",
   "Analyse de ton profil en cours...",
-  "Calcul de ton salaire futur...",
-  "Vérification dans la base de données du futur...",
+  "Connexion aux bases de données du futur...",
+  "Calcul de ta trajectoire professionnelle...",
+  "Vérification de ton salaire en 2042...",
   "Loan négocie avec ton futur manager...",
+  "Synchronisation temporelle en cours...",
+  "Résultat imminent...",
 ];
 
 export default function Home() {
@@ -16,34 +19,74 @@ export default function Home() {
   const [formData, setFormData] = useState({
     prenom: "",
     email: "",
-    localisation: "",
+    linkedinUrl: "",
+    jobTitle: "",
     profileText: "",
-    likes: "",
-    dislikes: "",
   });
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(LOADING_MESSAGES[0]);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState("");
   const [showOptional, setShowOptional] = useState(false);
 
+  // Validate LinkedIn URL format
+  const isValidLinkedInUrl = (url: string) => {
+    if (!url) return true; // Empty is handled by required
+    return /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[\w-]+\/?$/i.test(url);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate LinkedIn URL
+    if (!isValidLinkedInUrl(formData.linkedinUrl)) {
+      setError("L'URL LinkedIn n'est pas valide. Elle doit ressembler à : linkedin.com/in/ton-profil");
+      return;
+    }
+
     setLoading(true);
     setError("");
+    setLoadingProgress(0);
 
-    // Cycle loading messages
+    // Theatrical loader: cycle messages + progress bar
     let msgIndex = 0;
+    const totalDuration = 4000; // 4 seconds of theatre
+    const intervalTime = 500;
+    let elapsed = 0;
+
     const interval = setInterval(() => {
-      msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
-      setLoadingMsg(LOADING_MESSAGES[msgIndex]);
-    }, 3000);
+      elapsed += intervalTime;
+      setLoadingProgress(Math.min((elapsed / totalDuration) * 100, 95));
+      
+      if (elapsed % 1000 === 0) {
+        msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
+        setLoadingMsg(LOADING_MESSAGES[msgIndex]);
+      }
+    }, intervalTime);
+
+    // Wait for theatrical minimum before showing result
+    const theatrePromise = new Promise(resolve => setTimeout(resolve, totalDuration));
 
     try {
-      const res = await fetch("/api/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      // Combine jobTitle + profileText for the API
+      // The title goes first (will be weighted x5 by the algo)
+      const combinedProfile = formData.jobTitle + "\n\n" + (formData.profileText || "");
+
+      const [res] = await Promise.all([
+        fetch("/api/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prenom: formData.prenom,
+            email: formData.email,
+            linkedinUrl: formData.linkedinUrl,
+            profileText: combinedProfile,
+          }),
+        }),
+        theatrePromise, // Wait for theatre to complete
+      ]);
+
+      setLoadingProgress(100);
 
       if (!res.ok) {
         const data = await res.json();
@@ -51,7 +94,6 @@ export default function Home() {
       }
 
       const result = await res.json();
-      // Store result in sessionStorage for the result page
       sessionStorage.setItem("prediction", JSON.stringify(result));
       router.push("/resultat");
     } catch (err) {
@@ -74,7 +116,16 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-4 shimmer-text">
             {loadingMsg}
           </h2>
-          <div className="flex justify-center gap-1.5 mt-6">
+          
+          {/* Progress bar */}
+          <div className="w-full bg-[var(--card-bg)] rounded-full h-2 mb-6 overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-light)] transition-all duration-300 ease-out"
+              style={{ width: `${loadingProgress}%` }}
+            />
+          </div>
+
+          <div className="flex justify-center gap-1.5">
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
@@ -85,8 +136,8 @@ export default function Home() {
               />
             ))}
           </div>
-          <p className="text-sm text-zinc-500 mt-8">
-            Ça prend environ 15 secondes...
+          <p className="text-sm text-zinc-500 mt-6">
+            Loan analyse ton profil depuis 2042...
           </p>
         </div>
       </div>
@@ -104,15 +155,13 @@ export default function Home() {
         <p className="text-lg text-zinc-400 leading-relaxed">
           Loan revient de 2042 et a vu ton futur job.
           <br />
-          Colle ton profil LinkedIn et découvre ce qui t&apos;attend.
+          <span className="text-zinc-500">30 secondes pour découvrir ce qui t&apos;attend.</span>
         </p>
       </div>
 
       {/* Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-lg space-y-5"
-      >
+      <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-5">
+        {/* Row 1: Prénom + Email */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">
@@ -146,80 +195,75 @@ export default function Home() {
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-zinc-400 mb-1.5">
-            Localisation
-          </label>
-          <input
-            type="text"
-            value={formData.localisation}
-            onChange={(e) =>
-              setFormData({ ...formData, localisation: e.target.value })
-            }
-            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
-            placeholder="Paris, Lyon, Remote..."
-          />
-        </div>
-
+        {/* LinkedIn URL */}
         <div>
           <label className="block text-sm font-medium text-zinc-400 mb-1.5">
             Ton profil LinkedIn *
           </label>
-          <textarea
+          <input
+            type="url"
             required
-            rows={6}
-            value={formData.profileText}
+            value={formData.linkedinUrl}
             onChange={(e) =>
-              setFormData({ ...formData, profileText: e.target.value })
+              setFormData({ ...formData, linkedinUrl: e.target.value })
             }
-            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition resize-y"
-            placeholder="Copie-colle le texte de ton profil LinkedIn ici (à propos, expérience, compétences...)"
+            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+            placeholder="linkedin.com/in/ton-profil"
           />
           <p className="text-xs text-zinc-600 mt-1">
-            Va sur ton profil LinkedIn, sélectionne tout le texte, et colle-le ici.
+            Loan a besoin de ton profil pour voyager dans le temps.
           </p>
         </div>
 
-        {/* Optional section toggle */}
-        <button
-          type="button"
-          onClick={() => setShowOptional(!showOptional)}
-          className="text-sm text-[var(--accent-light)] hover:underline"
-        >
-          {showOptional ? "− Masquer" : "+ Ajouter"} tes likes / dislikes
-          (optionnel)
-        </button>
+        {/* Job Title - THE KEY INPUT */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+            Ton titre de poste LinkedIn *
+          </label>
+          <input
+            type="text"
+            required
+            value={formData.jobTitle}
+            onChange={(e) =>
+              setFormData({ ...formData, jobTitle: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+            placeholder="Ex: Product Manager @ MerciYanis | B2B SaaS"
+          />
+          <p className="text-xs text-zinc-600 mt-1">
+            C&apos;est la ligne juste en dessous de ton nom sur LinkedIn. Copie-la telle quelle !
+          </p>
+        </div>
+
+        {/* Optional: Full profile */}
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={() => setShowOptional(!showOptional)}
+            className="text-sm text-[var(--accent-light)] hover:underline flex items-center gap-1"
+          >
+            <span>{showOptional ? "−" : "+"}</span>
+            <span>Ajouter plus d&apos;infos pour un résultat encore plus précis</span>
+          </button>
+        </div>
 
         {showOptional && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">
-                Ce que tu aimes
-              </label>
-              <input
-                type="text"
-                value={formData.likes}
-                onChange={(e) =>
-                  setFormData({ ...formData, likes: e.target.value })
-                }
-                className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
-                placeholder="Le café, les retros..."
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">
-                Ce que tu n&apos;aimes pas
-              </label>
-              <input
-                type="text"
-                value={formData.dislikes}
-                onChange={(e) =>
-                  setFormData({ ...formData, dislikes: e.target.value })
-                }
-                className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
-                placeholder="Les meetings sans agenda..."
-              />
-            </div>
+          <div className="space-y-2 animate-in fade-in duration-200">
+            <label className="block text-sm font-medium text-zinc-400">
+              Ton profil complet (facultatif)
+            </label>
+            <textarea
+              rows={5}
+              value={formData.profileText}
+              onChange={(e) =>
+                setFormData({ ...formData, profileText: e.target.value })
+              }
+              className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition resize-y"
+              placeholder="Pour un résultat ultra-personnalisé : va sur ton profil LinkedIn, fais Cmd+A (ou Ctrl+A) pour tout sélectionner, puis colle ici."
+            />
+            <p className="text-xs text-zinc-600">
+              💡 Astuce : Sur ta page LinkedIn, fais <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">A</kbd> puis <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">C</kbd> pour tout copier.
+            </p>
           </div>
         )}
 
@@ -233,11 +277,11 @@ export default function Home() {
           type="submit"
           className="w-full py-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-light)] text-white font-semibold text-lg transition-all hover:shadow-[0_0_30px_var(--accent-glow)] cursor-pointer"
         >
-          Découvrir mon job en 2042
+          🔮 Découvrir mon job en 2042
         </button>
 
         <p className="text-xs text-zinc-600 text-center">
-          Loan ne stocke rien de méchant. Promis.
+          Loan ne stocke rien de méchant. Juste ce qu&apos;il faut pour voyager dans le temps.
         </p>
       </form>
     </div>
