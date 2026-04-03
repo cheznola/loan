@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import TransmissionFeed from "./components/TransmissionFeed";
+import TransmissionFeed from "../components/TransmissionFeed";
 
 const LOADING_MESSAGES = [
   "Loan consulte les archives de 2042...",
