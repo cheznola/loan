@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import TransmissionFeed from "@/components/TransmissionFeed";
+import TransmissionFeed from "../components/TransmissionFeed";
 
 interface Prediction {
   prenom: string;
