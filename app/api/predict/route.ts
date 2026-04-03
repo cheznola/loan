@@ -641,7 +641,7 @@ function generatePrediction(prenom: string, profileText: string) {
 
   const fullText = `Bonjour ${prenom}, je m'appelle Loan et je reviens de 2042 avec de bonnes nouvelles !
 
-En 2042, tu n'es plus ${currentJob}. Il s'est passé des choses. Tu es ${futureJob}.
+En 2042, tu n'es plus ${currentJob}. Il s'est passé des choses ^^. Tu es ${futureJob}.
 ${job.description}
 
 📊 Tes stats 2042 :
