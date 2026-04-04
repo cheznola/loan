@@ -747,28 +747,6 @@ export async function POST(request: NextRequest) {
 
     const result = generatePrediction(prenom, profileText);
 
-    // Save to database (non-blocking)
-    try {
-      const { default: pool } = await import("@/lib/db");
-      await pool.query(
-        `INSERT INTO submissions (prenom, email, localisation, profile_text, likes, dislikes, current_job, future_job, generated_result)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [
-          prenom,
-          email,
-          linkedinUrl || null,
-          profileText,
-          null,
-          null,
-          result.currentJob,
-          result.futureJob,
-          JSON.stringify({ ...result, linkedinUrl }),
-        ]
-      );
-    } catch (dbError) {
-      console.error("Failed to save submission:", dbError);
-    }
-
     return NextResponse.json({
       prenom,
       currentJob: result.currentJob,
