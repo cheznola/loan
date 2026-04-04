@@ -1,5 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// === AIRTABLE CONFIG ===
+const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+const AIRTABLE_TABLE = "Transmission";
+
+async function saveToAirtable(data: {
+  prenom: string;
+  email: string;
+  linkedinUrl: string;
+  jobTitle: string;
+  profileText?: string;
+}) {
+  if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
+    console.warn("Airtable credentials missing, skipping save");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          records: [
+            {
+              fields: {
+                Prénom: data.prenom,
+                Email: data.email,
+                "Profil LinkedIn": data.linkedinUrl,
+                "Titre de poste LinkedIn": data.jobTitle,
+                "Profil complet": data.profileText || "",
+              },
+            },
+          ],
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Airtable error:", errorData);
+    } else {
+      console.log("Airtable save success");
+    }
+  } catch (error) {
+    console.error("Airtable save error:", error);
+  }
+}
+
 // --- Job database by category ---
 const JOBS: Record<string, { title: string; description: string }[]> = {
   PRODUCT: [
@@ -666,7 +719,7 @@ Ce futur est incroyable, et tu ne pourras pas dire que tu n'étais pas au couran
 }
 
 export async function POST(request: NextRequest) {
-  console.log("[predict] Algorithmic endpoint v5-newform hit");
+  console.log("[predict] Algorithmic endpoint v6-airtable hit");
   try {
     const body = await request.json();
     const { prenom, email, linkedinUrl, profileText } = body;
@@ -677,6 +730,20 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Extract job title (first line) and profile text (rest)
+    const lines = profileText.split("\n");
+    const jobTitle = lines[0] || "";
+    const fullProfileText = lines.slice(2).join("\n");
+
+    // Save to Airtable (fire and forget - don't block the response)
+    saveToAirtable({
+      prenom,
+      email,
+      linkedinUrl: linkedinUrl || "",
+      jobTitle,
+      profileText: fullProfileText,
+    });
 
     const result = generatePrediction(prenom, profileText);
 
@@ -689,7 +756,7 @@ export async function POST(request: NextRequest) {
         [
           prenom,
           email,
-          linkedinUrl || null, // Store LinkedIn URL in localisation field for now
+          linkedinUrl || null,
           profileText,
           null,
           null,
@@ -710,7 +777,7 @@ export async function POST(request: NextRequest) {
       shareText: result.shareText,
       slackText: result.slackText,
       category: result.category,
-      version: "v5-newform",
+      version: "v6-airtable",
     });
   } catch (error) {
     console.error("Prediction error:", error);
