@@ -40,7 +40,7 @@ const TIMELINE = [
   {
     day: "Jour 5",
     title: "Intégration et go-live",
-    description: "Connexion Airtable pour la capture des leads. Récupération du code brut produit par NanoCorp, puis nettoyage complet : suppression de PostgreSQL, trop lourd pour ce use case. Ajout du terminal "Transmissions du futur" (social proof en temps réel). Déploiement sur Vercel. Premiers tests avec de vrais utilisateurs.",
+    description: "Connexion Airtable pour la capture des leads. Récupération du code brut produit par NanoCorp, puis nettoyage complet : suppression de PostgreSQL, trop lourd pour ce use case. Ajout du terminal 'Transmissions du futur' (social proof en temps réel). Déploiement sur Vercel. Premiers tests avec de vrais utilisateurs.",
     highlight: "Lead capture · Déploiement · MVP live",
   },
   {
