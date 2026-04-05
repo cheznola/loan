@@ -97,14 +97,14 @@ export default function MakingOfPage() {
           </h1>
           
           <p className="text-zinc-400 text-lg leading-relaxed">
-            Un side project de{" "}
+            Un side project d'{" "}
             <a 
-              href="https://linkedin.com/in/music-all" 
+              href="https://www.linkedin.com/in/emmanueldimarco/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-[var(--accent-light)] hover:underline"
             >
-              Manu Di Marco
+              Emmanuel
             </a>
             , PM & fondateur de{" "}
             <a 
@@ -119,7 +119,7 @@ export default function MakingOfPage() {
           </p>
           
           <p className="text-zinc-500 mt-4">
-            Loan prédit ton job en 2042. Cette page raconte comment je l'ai créé, 
+            Loan prédit ton job en 2042. Cette page raconte pourquoi et comment je l'ai créé, 
             les choix que j'ai faits, et ce que ça dit de ma façon de travailler.
           </p>
         </div>
