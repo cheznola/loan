@@ -97,14 +97,14 @@ export default function MakingOfPage() {
           </h1>
           
           <p className="text-zinc-400 text-lg leading-relaxed">
-            Un side project d'{" "}
+            Un side project de{" "}
             <a 
               href="https://www.linkedin.com/in/emmanueldimarco/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-[var(--accent-light)] hover:underline"
             >
-              Emmanuel
+              Manu
             </a>
             , PM & fondateur de{" "}
             <a 
