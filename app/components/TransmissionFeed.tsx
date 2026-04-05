@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import Link from 'next/link';
 
 // ============================================
 // CONFIGURATION
@@ -14,7 +15,11 @@ const FAKE_TRANSMISSIONS: Array<{
   prenom: string;
   job: string;
   comment: string;
+  isMeta?: boolean;
 }> = [
+  // === META - MAKING OF (apparaît de temps en temps) ===
+  { prenom: 'Manu', job: 'Créateur de Loan', comment: 'a documenté tout le process →', isMeta: true },
+
   // === PRODUCT (TA CIBLE PRINCIPALE) ===
   { prenom: 'Sophie', job: 'Professional Overthinker (lvl 4)', comment: 'Elle analyse encore si elle devait analyser.' },
   { prenom: 'Antoine', job: 'Chief Je-Te-L\'Avais-Dit Officer', comment: 'On lui a dit. Il a dit "je le savais".' },
@@ -121,7 +126,6 @@ const FAKE_TRANSMISSIONS: Array<{
   { prenom: 'Nicolas', job: 'Board Meeting Actor', comment: 'Tout va bien. Vraiment. Vraiment.' },
 
   // === BONUS - EXTRA DRÔLES ===
-  { prenom: 'Manu', job: 'Professional Overthinker (lvl 4)', comment: 'Il analyse encore si ce résultat est valide.' },
   { prenom: 'Jean-Michel', job: 'Chief "Per My Last Email" Officer', comment: 'Il rappelle ce qu\'il a déjà dit. Avec précision.' },
   { prenom: 'Marie-Claire', job: 'Synergy Sommelier', comment: 'Notes de collaboration, finale de disruption.' },
   { prenom: 'Pierre-Antoine', job: 'Meeting About Meeting Scheduler', comment: 'Il prépare les meetings qui préparent les meetings.' },
@@ -164,8 +168,21 @@ export default function TransmissionFeed() {
 
   // Animation des logs
   useEffect(() => {
-    // Shuffle les transmissions au démarrage
-    const shuffled = [...FAKE_TRANSMISSIONS].sort(() => Math.random() - 0.5);
+    // Shuffle les transmissions au démarrage, mais garde les meta moins fréquentes
+    const regularLogs = FAKE_TRANSMISSIONS.filter(t => !t.isMeta);
+    const metaLogs = FAKE_TRANSMISSIONS.filter(t => t.isMeta);
+    
+    // Insérer un meta log toutes les ~15 transmissions
+    const shuffled: typeof FAKE_TRANSMISSIONS = [];
+    const shuffledRegular = [...regularLogs].sort(() => Math.random() - 0.5);
+    
+    shuffledRegular.forEach((log, i) => {
+      shuffled.push(log);
+      // Insérer un meta log après chaque 15 transmissions
+      if ((i + 1) % 15 === 0 && metaLogs.length > 0) {
+        shuffled.push(metaLogs[Math.floor(Math.random() * metaLogs.length)]);
+      }
+    });
     
     let index = 0;
     const addLog = () => {
@@ -238,13 +255,28 @@ export default function TransmissionFeed() {
               }}
             >
               <span className="text-emerald-500 flex-shrink-0">&gt;</span>
-              <span className="text-emerald-300/90">
-                <span className="text-amber-400">{log.prenom}</span>
-                {' '}sera{' '}
-                <span className="text-pink-400 italic">{log.job}</span>
-                .{' '}
-                <span className="text-emerald-300/60">{log.comment}</span>
-              </span>
+              {log.isMeta ? (
+                // Meta log - lien vers making-of
+                <span className="text-emerald-300/90">
+                  <span className="text-cyan-400">{log.prenom}</span>
+                  {' '}({log.job}){' '}
+                  <Link 
+                    href="/making-of" 
+                    className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2"
+                  >
+                    {log.comment}
+                  </Link>
+                </span>
+              ) : (
+                // Log normal
+                <span className="text-emerald-300/90">
+                  <span className="text-amber-400">{log.prenom}</span>
+                  {' '}sera{' '}
+                  <span className="text-pink-400 italic">{log.job}</span>
+                  .{' '}
+                  <span className="text-emerald-300/60">{log.comment}</span>
+                </span>
+              )}
             </div>
           ))}
         </div>
