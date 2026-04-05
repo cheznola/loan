@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import TransmissionFeed from "../components/TransmissionFeed";
 
 interface Prediction {
@@ -111,6 +112,28 @@ export default function ResultPage() {
           >
             Recommencer avec un autre profil
           </button>
+        </div>
+
+        {/* Signature créateur - discret mais visible */}
+        <div className="mt-12 pt-6 border-t border-zinc-800/50 text-center">
+          <p className="text-zinc-600 text-sm">
+            Créé par{" "}
+            <a 
+              href="https://linkedin.com/in/music-all" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-zinc-400 hover:text-white transition"
+            >
+              Manu
+            </a>
+            {" "}·{" "}
+            <Link 
+              href="/making-of"
+              className="text-zinc-500 hover:text-[var(--accent-light)] transition"
+            >
+              Comment j'ai construit ça →
+            </Link>
+          </p>
         </div>
       </div>
     </div>
