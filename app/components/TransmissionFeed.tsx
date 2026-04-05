@@ -179,7 +179,7 @@ export default function TransmissionFeed() {
     shuffledRegular.forEach((log, i) => {
       shuffled.push(log);
       // Insérer un meta log après chaque 15 transmissions
-      if ((i + 1) % 15 === 0 && metaLogs.length > 0) {
+      if ((i + 1) % 3 === 0 && metaLogs.length > 0) {
         shuffled.push(metaLogs[Math.floor(Math.random() * metaLogs.length)]);
       }
     });
