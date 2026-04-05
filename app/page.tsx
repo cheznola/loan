@@ -285,7 +285,7 @@ export default function Home() {
         </button>
 
         <p className="text-xs text-zinc-600 text-center">
-          Loan ne stocke rien de méchant. Juste ce qu&apos;il faut pour voyager dans le temps.
+          Loan revient de 2042 (sans garantie de précision temporelle). Vos données restent en 2026.
         </p>
       </form>
     </div>
