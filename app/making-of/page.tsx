@@ -3,32 +3,32 @@
 import Link from "next/link";
 
 // ============================================
-// TIMELINE DATA - Contexte NanoCorp + raisonnement PM senior
+// TIMELINE DATA
 // ============================================
 
 const TIMELINE = [
   {
     day: "Jour 0",
     title: "Le problème d'acquisition",
-    description: "Nola grandit par le bouche-à-oreille depuis 18 mois. Ça fonctionne, mais ça ne scale pas. Je cherche un levier d'acquisition qui touche des Product People qualifiés — sans paid, sans cold outreach LinkedIn. La contrainte : un flux qui génère des leads exploitables (email + profil), pas juste de la visibilité.",
+    description: "Depuis novembre 2025, Nola se développe de manière organique avec un format simple : une édition mensuelle à Paris, autour de dîners en petit groupe (4 à 6 Product People par table). Je cherche à faire découvrir cette initiative aux bonnes personnes, sans paid ni cold outreach, tout en gardant une croissance volontairement progressive et la qualité des échanges.",
     highlight: "Acquisition · Lead generation · Ciblage",
   },
   {
     day: "Jour 1",
     title: "L'hypothèse : lead magnet viral",
-    description: "En testant une nouveauté de NanoCorp.so (plateforme d'agents IA), je réalise que je peux prototyper un outil complet en quelques jours. L'idée : un générateur humoristique de 'job en 2042' basé sur le profil LinkedIn. Viral par nature (ego + humour + partage), ciblé (les PMs se reconnaissent), et collecte naturellement les données dont j'ai besoin.",
+    description: "En testant NanoCorp.so (plateforme pour lancer et opérer des micro-entreprises autonomes pilotées par des agents IA), je teste de prototyper une idée en 1h. L'idée : un générateur humoristique de 'job en 2042' basé sur le profil LinkedIn. Viral par nature (ego + humour + partage), ciblé (les PMs se reconnaissent), et capture naturellement les données dont j'ai besoin. Après tout, quel Product ne s’est pas déjà demandé comment son métier va évoluer dans les prochaines années… voire les prochaines semaines ?",
     highlight: "Hypothèse · Viralité · NanoCorp",
   },
   {
     day: "Jour 2",
     title: "Arbitrage structurant : pas d'API IA",
-    description: "Premier choix produit : ne PAS utiliser de génération IA pour les résultats. Les raisons : coût par requête (chaque prédiction coûterait ~0.01€), latence (2-3s vs instantané), et surtout qualité de l'humour — l'IA génère du 'drôle générique', pas du 'drôle métier'. J'opte pour un système combinatoire : 12 catégories × 5 jobs × variations = 2160 combinaisons, pré-écrites avec le bon ton.",
+    description: "Premier choix produit : ne PAS utiliser de génération IA pour les résultats. Les raisons : coût par requête (chaque prédiction coûterait ~0.05€), latence (2-3s vs instantané), et surtout qualité de l'humour : l'IA génère du 'drôle générique', pas du 'drôle métier'. J'opte pour un système combinatoire : 12 catégories × 5 jobs × variations = 2160 combinaisons, pré-écrites avec le bon ton.",
     highlight: "Trade-off · Coût vs qualité · Architecture",
   },
   {
     day: "Jour 3",
     title: "L'algo de détection",
-    description: "Travail en itération sur GitHub avec Claude : 800+ mots-clés par catégorie métier, scoring pondéré (titre LinkedIn = x5), nettoyage du bruit de sidebar. Mon rôle : donner le contexte métier, challenger les edge cases, valider que 'PM' matche bien PRODUCT et pas autre chose. L'agent IA exécute vite — le jugement produit reste humain.",
+    description: "Travail en itération sur GitHub avec Claude : 800+ mots-clés par catégorie métier, scoring pondéré (titre LinkedIn = x5), nettoyage du bruit de sidebar. Mon rôle : donner le contexte métier, challenger les edge cases, valider que 'PM' matche bien PRODUCT et pas autre chose. L'agent IA exécute vite : le jugement produit reste humain.",
     highlight: "Prompt engineering · Itération · GitHub",
   },
   {
@@ -40,7 +40,7 @@ const TIMELINE = [
   {
     day: "Jour 5",
     title: "Intégration et go-live",
-    description: "Connexion Airtable pour la capture des leads. Le code initial de NanoCorp incluait PostgreSQL — supprimé, trop lourd pour ce use case. Ajout du terminal 'Transmissions du futur' (social proof temps réel). Déploiement Vercel. Premiers tests avec de vrais utilisateurs.",
+    description: "Connexion Airtable pour la capture des leads. Récupération du code brut produit par NanoCorp, puis nettoyage complet : suppression de PostgreSQL, trop lourd pour ce use case. Ajout du terminal "Transmissions du futur" (social proof en temps réel). Déploiement sur Vercel. Premiers tests avec de vrais utilisateurs.",
     highlight: "Lead capture · Déploiement · MVP live",
   },
   {
@@ -58,11 +58,11 @@ const TIMELINE = [
 const CONVICTIONS = [
   {
     title: "Ship fast, learn faster",
-    description: "Loan est sorti en 5 jours, avec des bugs connus et des features manquantes. Ce n'est pas de l'improvisation — c'est un choix : une V1 live génère du feedback réel, une V1 dans un doc ne génère rien. J'applique ce principe depuis mes débuts en Product.",
+    description: "Loan est sorti en 2 jours, avec des bugs connus et des features manquantes. Ce n'est pas de l'improvisation, c'est un choix : une V1 live génère du feedback réel, une V1 dans un doc ne génère rien. J'applique ce principe depuis mes débuts en Product.",
   },
   {
     title: "L'IA est un accélérateur, pas un décideur",
-    description: "J'utilise des agents IA quotidiennement dans mon travail. Leur force : exécuter vite, explorer plus de pistes, réduire le coût cognitif des tâches répétitives. Leur limite : ils n'ont pas le contexte métier, le jugement produit, le 'pourquoi'. Sur Loan, l'IA a écrit 90% du code — mais les arbitrages (pas de génération IA, scoring pondéré, gestion du bruit) sont des décisions humaines.",
+    description: "J'utilise des agents IA quotidiennement dans mon travail. Leur force : exécuter vite, explorer plus de pistes, réduire le coût cognitif des tâches répétitives. Leur limite : ils n'ont pas le contexte métier, le jugement produit, le 'pourquoi'. Sur Loan, l'IA a écrit 90% du code : mais l'orchestration et les arbitrages (pas de génération IA, scoring pondéré, gestion du bruit) sont des décisions humaines.",
   },
   {
     title: "Les données synthétiques mentent",
@@ -70,7 +70,7 @@ const CONVICTIONS = [
   },
   {
     title: "Choisir ses batailles avec l'IA générative",
-    description: "Il était tentant de laisser l'IA générer les jobs 2042 à la volée — plus de variété, moins d'effort de rédaction. Mais : latence, coût récurrent, et surtout perte de contrôle sur le ton. 2160 combinaisons pré-écrites suffisent pour que chaque résultat semble unique. Le choix 'pas d'IA' était un choix produit, pas une contrainte technique.",
+    description: "Il était tentant de laisser l'IA générer les jobs 2042 à la volée : plus de variété, moins d'effort de rédaction. Mais : latence, coût récurrent, et surtout perte de contrôle sur le ton. 2160 combinaisons pré-écrites suffisent pour que chaque résultat semble unique. Le choix 'pas d'IA' était un choix produit, pas une contrainte technique.",
   },
 ];
 
@@ -84,22 +84,22 @@ const STACK_SECTIONS = [
     items: [
       { label: "Framework", value: "Next.js 14 (App Router, Server Components)" },
       { label: "Déploiement", value: "Vercel (CI/CD depuis GitHub)" },
-      { label: "Base de données", value: "Airtable (leads) — PostgreSQL retiré" },
+      { label: "Base de données", value: "Airtable (leads) - PostgreSQL retiré" },
     ],
   },
   {
     title: "IA & Agents",
     items: [
-      { label: "Agent principal", value: "Claude 3.5 Sonnet (Anthropic)" },
-      { label: "Plateforme d'orchestration", value: "NanoCorp.so — agents IA pour le prototypage" },
+      { label: "Agent principal", value: "Claude 4.5 Opus (Anthropic)" },
+      { label: "Plateforme d'orchestration", value: "NanoCorp.so - agents IA pour le prototypage" },
       { label: "Méthode de travail", value: "Prompting itératif, context engineering, validation humaine systématique" },
     ],
   },
   {
     title: "Choix produit sur l'IA",
     items: [
-      { label: "Génération des résultats", value: "Algorithmique (pas d'API IA) — contrôle du ton, coût nul, latence zéro" },
-      { label: "Détection de catégorie", value: "Scoring pondéré + 800 mots-clés — pas de classification IA" },
+      { label: "Génération des résultats", value: "Algorithmique (pas d'API IA) - contrôle du ton, coût nul, latence zéro" },
+      { label: "Détection de catégorie", value: "Scoring pondéré + 800 mots-clés - pas de classification IA" },
     ],
   },
 ];
@@ -123,18 +123,18 @@ export default function MakingOfPage() {
           </Link>
           
           <h1 className="text-3xl sm:text-4xl font-bold mt-4 mb-3">
-            De l'idée au go-live en 5 jours
+            De l'idée au go-live en 2 jours
           </h1>
           
           <p className="text-zinc-400 text-lg leading-relaxed">
             Par{" "}
             <a 
-              href="https://linkedin.com/in/music-all" 
+              href="https://www.linkedin.com/in/emmanueldimarco/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-[var(--accent-light)] hover:underline"
             >
-              Manu Di Marco
+              Manu
             </a>
             {" "}— Product Manager, fondateur de{" "}
             <a 
@@ -148,7 +148,7 @@ export default function MakingOfPage() {
           </p>
           
           <p className="text-zinc-500 mt-4 leading-relaxed">
-            Loan est un side project construit en une semaine pour résoudre un problème 
+            Loan est un side project construit en 2 jours pour résoudre un problème 
             concret : générer des leads qualifiés pour une communauté de Product People. 
             Ce document retrace les choix, les arbitrages, et le travail avec des agents IA.
           </p>
@@ -161,7 +161,7 @@ export default function MakingOfPage() {
           </h2>
           <p className="text-zinc-300 leading-relaxed mb-3">
             <strong>Nola</strong> organise des dîners mensuels pour les Product People à Paris. 
-            La communauté grandit par cooptation, mais le flux reste artisanal. 
+            La communauté grandit par cooptation et le flux reste artisanal. 
           </p>
           <p className="text-zinc-400 leading-relaxed">
             L'enjeu : trouver un levier d'acquisition qui <strong>cible les bons profils</strong> (PM, PO, CPO...), 
@@ -269,7 +269,7 @@ export default function MakingOfPage() {
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href="https://linkedin.com/in/music-all"
+              href="https://www.linkedin.com/in/emmanueldimarco/"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-xl bg-[#0077B5] hover:bg-[#006097] text-white font-medium transition inline-flex items-center justify-center gap-2"
