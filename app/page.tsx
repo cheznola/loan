@@ -235,7 +235,7 @@ export default function Home() {
             placeholder="Ex: Product Manager @ MerciYanis | B2B SaaS"
           />
           <p className="text-xs text-zinc-600 mt-1">
-            C&apos;est la ligne juste en dessous de ton nom sur LinkedIn. Copie-la telle quelle !
+            Copie-la telle quelle !
           </p>
         </div>
 
@@ -281,7 +281,7 @@ export default function Home() {
           type="submit"
           className="w-full py-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-light)] text-white font-semibold text-lg transition-all hover:shadow-[0_0_30px_var(--accent-glow)] cursor-pointer"
         >
-          🔮 Découvrir mon job en 2042
+          Découvrir mon job en 2042
         </button>
 
         <p className="text-xs text-zinc-600 text-center">
