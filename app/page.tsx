@@ -16,6 +16,35 @@ const LOADING_MESSAGES = [
   "Résultat imminent...",
 ];
 
+// Short inline error messages (displayed as placeholder inside the field)
+const INLINE_ERRORS: Record<string, Record<string, string>> = {
+  prenom: {
+    required: "Loan a besoin de ton prénom !",
+  },
+  email: {
+    invalid_format: "Hmm, ça ne ressemble pas à un email...",
+    blacklisted: "Pas de fausse adresse, Loan te voit !",
+    disposable: "Les emails jetables n'existent plus en 2042",
+    too_short: "Email trop court pour être réel",
+    gibberish: "Ton futur mérite un vrai email !",
+  },
+  ville: {
+    required: "Dans quelle ville bosses-tu ?",
+    too_short: "Nom de ville trop court",
+    too_long: "Nom de ville trop long",
+    zip_code: "Le nom de la ville, pas le code postal !",
+    invalid: "Ça ne ressemble pas à une ville...",
+  },
+  linkedinUrl: {
+    required: "Loan a besoin de ton profil LinkedIn",
+    company_page: "Ton profil perso, pas une page entreprise !",
+    invalid: "Ça ne ressemble pas à un profil LinkedIn",
+  },
+  jobTitle: {
+    required: "Sans titre, Loan ne peut pas prédire !",
+  },
+};
+
 export default function Home() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -32,7 +61,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [showOptional, setShowOptional] = useState(false);
 
-  // Field-level errors
+  // Field-level errors (now displayed INSIDE the input as placeholder)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Validate a single field on blur
@@ -64,41 +93,78 @@ export default function Home() {
     return result;
   };
 
+  // Map validation lib errors to short inline messages
+  const toInlineError = (field: string, errorMsg: string): string => {
+    const lower = errorMsg.toLowerCase();
+
+    if (field === "email") {
+      if (lower.includes("format")) return INLINE_ERRORS.email.invalid_format;
+      if (lower.includes("fausse") || lower.includes("blacklist")) return INLINE_ERRORS.email.blacklisted;
+      if (lower.includes("jetable")) return INLINE_ERRORS.email.disposable;
+      if (lower.includes("court")) return INLINE_ERRORS.email.too_short;
+      if (lower.includes("ressemble")) return INLINE_ERRORS.email.gibberish;
+      return INLINE_ERRORS.email.gibberish;
+    }
+    if (field === "ville") {
+      if (!errorMsg || lower.includes("requis")) return INLINE_ERRORS.ville.required;
+      if (lower.includes("courte")) return INLINE_ERRORS.ville.too_short;
+      if (lower.includes("longue")) return INLINE_ERRORS.ville.too_long;
+      if (lower.includes("postal")) return INLINE_ERRORS.ville.zip_code;
+      return INLINE_ERRORS.ville.invalid;
+    }
+    if (field === "linkedinUrl") {
+      if (lower.includes("requis")) return INLINE_ERRORS.linkedinUrl.required;
+      if (lower.includes("entreprise")) return INLINE_ERRORS.linkedinUrl.company_page;
+      return INLINE_ERRORS.linkedinUrl.invalid;
+    }
+    return errorMsg;
+  };
+
   // Validate all fields before submit
   const validateAll = (): boolean => {
     const errors: Record<string, string> = {};
 
     const emailResult = validateEmail(formData.email);
-    if (!emailResult.valid) errors.email = emailResult.error || "";
+    if (!emailResult.valid) errors.email = toInlineError("email", emailResult.error || "");
 
     const linkedinResult = validateLinkedInUrl(formData.linkedinUrl);
-    if (!linkedinResult.valid) errors.linkedinUrl = linkedinResult.error || "";
+    if (!linkedinResult.valid) errors.linkedinUrl = toInlineError("linkedinUrl", linkedinResult.error || "");
 
     const villeResult = validateVille(formData.ville);
-    if (!villeResult.valid) errors.ville = villeResult.error || "";
+    if (!villeResult.valid) errors.ville = toInlineError("ville", villeResult.error || "");
 
     if (!formData.prenom.trim()) {
-      errors.prenom = "🔮 Loan a besoin de ton prénom pour personnaliser ta prédiction.";
+      errors.prenom = INLINE_ERRORS.prenom.required;
     }
 
     if (!formData.jobTitle.trim()) {
-      errors.jobTitle = "🔮 Sans titre de poste, Loan ne peut pas calculer ta trajectoire de carrière.";
+      errors.jobTitle = INLINE_ERRORS.jobTitle.required;
     }
 
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
+  // Clear error when user starts typing
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Run all validations
     if (!validateAll()) {
       setError("");
       return;
     }
 
-    // Clean LinkedIn URL before sending
     const linkedinResult = validateLinkedInUrl(formData.linkedinUrl);
     const cleanedLinkedinUrl = linkedinResult.cleaned || formData.linkedinUrl;
 
@@ -106,7 +172,6 @@ export default function Home() {
     setError("");
     setLoadingProgress(0);
 
-    // Theatrical loader
     let msgIndex = 0;
     const totalDuration = 5000;
     const intervalTime = 500;
@@ -167,16 +232,21 @@ export default function Home() {
     }
   };
 
-  // Helper: render field error
-  const FieldError = ({ field }: { field: string }) => {
-    const msg = fieldErrors[field];
-    if (!msg) return null;
-    return (
-      <p className="text-sm text-amber-400 mt-1.5" style={{ animation: "fadeIn 0.2s ease-out" }}>
-        {msg}
-      </p>
-    );
-  };
+  // Helper: get input classes based on error state
+  const inputClass = (field: string) =>
+    `w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
+      fieldErrors[field]
+        ? "border-amber-400/60 placeholder-amber-400/80"
+        : "border-[var(--card-border)] placeholder-zinc-600"
+    } text-white focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`;
+
+  // Helper: get placeholder (error message or default)
+  const getPlaceholder = (field: string, defaultPlaceholder: string) =>
+    fieldErrors[field] ? `⚠ ${fieldErrors[field]}` : defaultPlaceholder;
+
+  // Helper: get value (hide value when error is showing so placeholder is visible)
+  const getDisplayValue = (field: string) =>
+    fieldErrors[field] ? "" : formData[field as keyof typeof formData];
 
   if (loading) {
     return (
@@ -242,17 +312,11 @@ export default function Home() {
             <input
               type="text"
               required
-              value={formData.prenom}
-              onChange={(e) =>
-                setFormData({ ...formData, prenom: e.target.value })
-              }
-              onBlur={() => {
-                if (!formData.prenom.trim()) {
-                  setFieldErrors((prev) => ({
-                    ...prev,
-                    prenom: "🔮 Loan a besoin de ton prénom pour personnaliser ta prédiction.",
-                  }));
-                } else {
+              value={getDisplayValue("prenom")}
+              onChange={(e) => handleChange("prenom", e.target.value)}
+              onFocus={() => {
+                // Restore value when user focuses back
+                if (fieldErrors.prenom) {
                   setFieldErrors((prev) => {
                     const next = { ...prev };
                     delete next.prenom;
@@ -260,12 +324,17 @@ export default function Home() {
                   });
                 }
               }}
-              className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
-                fieldErrors.prenom ? "border-amber-400/60" : "border-[var(--card-border)]"
-              } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
-              placeholder="Ton prénom"
+              onBlur={() => {
+                if (!formData.prenom.trim()) {
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    prenom: INLINE_ERRORS.prenom.required,
+                  }));
+                }
+              }}
+              className={inputClass("prenom")}
+              placeholder={getPlaceholder("prenom", "Ton prénom")}
             />
-            <FieldError field="prenom" />
           </div>
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">
@@ -274,9 +343,9 @@ export default function Home() {
             <input
               type="email"
               required
-              value={formData.email}
-              onChange={(e) => {
-                setFormData({ ...formData, email: e.target.value });
+              value={getDisplayValue("email")}
+              onChange={(e) => handleChange("email", e.target.value)}
+              onFocus={() => {
                 if (fieldErrors.email) {
                   setFieldErrors((prev) => {
                     const next = { ...prev };
@@ -285,13 +354,20 @@ export default function Home() {
                   });
                 }
               }}
-              onBlur={() => validateField("email", formData.email)}
-              className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
-                fieldErrors.email ? "border-amber-400/60" : "border-[var(--card-border)]"
-              } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
-              placeholder="ton@email.com"
+              onBlur={() => {
+                if (formData.email) {
+                  const result = validateField("email", formData.email);
+                  if (!result.valid) {
+                    setFieldErrors((prev) => ({
+                      ...prev,
+                      email: toInlineError("email", result.error || ""),
+                    }));
+                  }
+                }
+              }}
+              className={inputClass("email")}
+              placeholder={getPlaceholder("email", "ton@email.com")}
             />
-            <FieldError field="email" />
           </div>
         </div>
 
@@ -303,9 +379,9 @@ export default function Home() {
           <input
             type="text"
             required
-            value={formData.ville}
-            onChange={(e) => {
-              setFormData({ ...formData, ville: e.target.value });
+            value={getDisplayValue("ville")}
+            onChange={(e) => handleChange("ville", e.target.value)}
+            onFocus={() => {
               if (fieldErrors.ville) {
                 setFieldErrors((prev) => {
                   const next = { ...prev };
@@ -314,13 +390,20 @@ export default function Home() {
                 });
               }
             }}
-            onBlur={() => validateField("ville", formData.ville)}
-            className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
-              fieldErrors.ville ? "border-amber-400/60" : "border-[var(--card-border)]"
-            } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
-            placeholder="Paris, Lyon, Remote..."
+            onBlur={() => {
+              if (formData.ville) {
+                const result = validateField("ville", formData.ville);
+                if (!result.valid) {
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    ville: toInlineError("ville", result.error || ""),
+                  }));
+                }
+              }
+            }}
+            className={inputClass("ville")}
+            placeholder={getPlaceholder("ville", "Paris, Lyon, Remote...")}
           />
-          <FieldError field="ville" />
         </div>
 
         {/* LinkedIn URL */}
@@ -331,9 +414,9 @@ export default function Home() {
           <input
             type="text"
             required
-            value={formData.linkedinUrl}
-            onChange={(e) => {
-              setFormData({ ...formData, linkedinUrl: e.target.value });
+            value={getDisplayValue("linkedinUrl")}
+            onChange={(e) => handleChange("linkedinUrl", e.target.value)}
+            onFocus={() => {
               if (fieldErrors.linkedinUrl) {
                 setFieldErrors((prev) => {
                   const next = { ...prev };
@@ -343,17 +426,21 @@ export default function Home() {
               }
             }}
             onBlur={() => {
-              const result = validateField("linkedinUrl", formData.linkedinUrl);
-              if (result.valid && result.cleaned) {
-                setFormData((prev) => ({ ...prev, linkedinUrl: result.cleaned! }));
+              if (formData.linkedinUrl) {
+                const result = validateField("linkedinUrl", formData.linkedinUrl);
+                if (result.valid && result.cleaned) {
+                  setFormData((prev) => ({ ...prev, linkedinUrl: result.cleaned! }));
+                } else if (!result.valid) {
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    linkedinUrl: toInlineError("linkedinUrl", result.error || ""),
+                  }));
+                }
               }
             }}
-            className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
-              fieldErrors.linkedinUrl ? "border-amber-400/60" : "border-[var(--card-border)]"
-            } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
-            placeholder="linkedin.com/in/ton-profil"
+            className={inputClass("linkedinUrl")}
+            placeholder={getPlaceholder("linkedinUrl", "linkedin.com/in/ton-profil")}
           />
-          <FieldError field="linkedinUrl" />
           {!fieldErrors.linkedinUrl && (
             <p className="text-xs text-zinc-600 mt-1">
               Loan a besoin de ton profil pour voyager dans le temps.
@@ -369,17 +456,10 @@ export default function Home() {
           <input
             type="text"
             required
-            value={formData.jobTitle}
-            onChange={(e) =>
-              setFormData({ ...formData, jobTitle: e.target.value })
-            }
-            onBlur={() => {
-              if (!formData.jobTitle.trim()) {
-                setFieldErrors((prev) => ({
-                  ...prev,
-                  jobTitle: "🔮 Sans titre de poste, Loan ne peut pas calculer ta trajectoire de carrière.",
-                }));
-              } else {
+            value={getDisplayValue("jobTitle")}
+            onChange={(e) => handleChange("jobTitle", e.target.value)}
+            onFocus={() => {
+              if (fieldErrors.jobTitle) {
                 setFieldErrors((prev) => {
                   const next = { ...prev };
                   delete next.jobTitle;
@@ -387,12 +467,17 @@ export default function Home() {
                 });
               }
             }}
-            className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
-              fieldErrors.jobTitle ? "border-amber-400/60" : "border-[var(--card-border)]"
-            } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
-            placeholder="Ex: Product Manager @ MerciYanis | B2B SaaS"
+            onBlur={() => {
+              if (!formData.jobTitle.trim()) {
+                setFieldErrors((prev) => ({
+                  ...prev,
+                  jobTitle: INLINE_ERRORS.jobTitle.required,
+                }));
+              }
+            }}
+            className={inputClass("jobTitle")}
+            placeholder={getPlaceholder("jobTitle", "Ex: Product Manager @ MerciYanis | B2B SaaS")}
           />
-          <FieldError field="jobTitle" />
           {!fieldErrors.jobTitle && (
             <p className="text-xs text-zinc-600 mt-1">Copie-le telle quelle !</p>
           )}
