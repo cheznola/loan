@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TransmissionFeed from "./components/TransmissionFeed";
+import { validateEmail, validateLinkedInUrl, validateVille } from "../lib/validation";
 
 const LOADING_MESSAGES = [
   "Loan consulte les archives de 2042...",
@@ -31,48 +32,103 @@ export default function Home() {
   const [error, setError] = useState("");
   const [showOptional, setShowOptional] = useState(false);
 
-  // Validate LinkedIn URL format
-  const isValidLinkedInUrl = (url: string) => {
-    if (!url) return true; // Empty is handled by required
-    return /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[\w-]+\/?$/i.test(url);
+  // Field-level errors
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  // Validate a single field on blur
+  const validateField = (field: string, value: string) => {
+    let result: { valid: boolean; error?: string; cleaned?: string } = { valid: true };
+
+    switch (field) {
+      case "email":
+        result = validateEmail(value);
+        break;
+      case "linkedinUrl":
+        result = validateLinkedInUrl(value);
+        break;
+      case "ville":
+        result = validateVille(value);
+        break;
+    }
+
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      if (result.valid) {
+        delete next[field];
+      } else {
+        next[field] = result.error || "Champ invalide";
+      }
+      return next;
+    });
+
+    return result;
+  };
+
+  // Validate all fields before submit
+  const validateAll = (): boolean => {
+    const errors: Record<string, string> = {};
+
+    const emailResult = validateEmail(formData.email);
+    if (!emailResult.valid) errors.email = emailResult.error || "";
+
+    const linkedinResult = validateLinkedInUrl(formData.linkedinUrl);
+    if (!linkedinResult.valid) errors.linkedinUrl = linkedinResult.error || "";
+
+    const villeResult = validateVille(formData.ville);
+    if (!villeResult.valid) errors.ville = villeResult.error || "";
+
+    if (!formData.prenom.trim()) {
+      errors.prenom = "🔮 Loan a besoin de ton prénom pour personnaliser ta prédiction.";
+    }
+
+    if (!formData.jobTitle.trim()) {
+      errors.jobTitle = "🔮 Sans titre de poste, Loan ne peut pas calculer ta trajectoire de carrière.";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate LinkedIn URL
-    if (!isValidLinkedInUrl(formData.linkedinUrl)) {
-      setError("L'URL LinkedIn n'est pas valide. Elle doit ressembler à : linkedin.com/in/ton-profil");
+
+    // Run all validations
+    if (!validateAll()) {
+      setError("");
       return;
     }
+
+    // Clean LinkedIn URL before sending
+    const linkedinResult = validateLinkedInUrl(formData.linkedinUrl);
+    const cleanedLinkedinUrl = linkedinResult.cleaned || formData.linkedinUrl;
 
     setLoading(true);
     setError("");
     setLoadingProgress(0);
 
-    // Theatrical loader: cycle messages + progress bar
+    // Theatrical loader
     let msgIndex = 0;
-    const totalDuration = 5000; // 5 seconds of theatre
+    const totalDuration = 5000;
     const intervalTime = 500;
     let elapsed = 0;
 
     const interval = setInterval(() => {
       elapsed += intervalTime;
       setLoadingProgress(Math.min((elapsed / totalDuration) * 100, 95));
-      
+
       if (elapsed % 1000 === 0) {
         msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
         setLoadingMsg(LOADING_MESSAGES[msgIndex]);
       }
     }, intervalTime);
 
-    // Wait for theatrical minimum before showing result
-    const theatrePromise = new Promise(resolve => setTimeout(resolve, totalDuration));
+    const theatrePromise = new Promise((resolve) =>
+      setTimeout(resolve, totalDuration)
+    );
 
     try {
-      // Combine jobTitle + profileText for the API
-      // The title goes first (will be weighted x5 by the algo)
-      const combinedProfile = formData.jobTitle + "\n\n" + (formData.profileText || "");
+      const combinedProfile =
+        formData.jobTitle + "\n\n" + (formData.profileText || "");
 
       const [res] = await Promise.all([
         fetch("/api/predict", {
@@ -82,11 +138,11 @@ export default function Home() {
             prenom: formData.prenom,
             email: formData.email,
             ville: formData.ville,
-            linkedinUrl: formData.linkedinUrl,
+            linkedinUrl: cleanedLinkedinUrl,
             profileText: combinedProfile,
           }),
         }),
-        theatrePromise, // Wait for theatre to complete
+        theatrePromise,
       ]);
 
       setLoadingProgress(100);
@@ -111,6 +167,17 @@ export default function Home() {
     }
   };
 
+  // Helper: render field error
+  const FieldError = ({ field }: { field: string }) => {
+    const msg = fieldErrors[field];
+    if (!msg) return null;
+    return (
+      <p className="text-sm text-amber-400 mt-1.5" style={{ animation: "fadeIn 0.2s ease-out" }}>
+        {msg}
+      </p>
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-6">
@@ -119,15 +186,12 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-4 shimmer-text">
             {loadingMsg}
           </h2>
-          
-          {/* Progress bar */}
           <div className="w-full bg-[var(--card-bg)] rounded-full h-2 mb-6 overflow-hidden">
-            <div 
+            <div
               className="h-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-light)] transition-all duration-300 ease-out"
               style={{ width: `${loadingProgress}%` }}
             />
           </div>
-
           <div className="flex justify-center gap-1.5">
             {[0, 1, 2].map((i) => (
               <div
@@ -158,7 +222,9 @@ export default function Home() {
         <p className="text-lg text-zinc-400 leading-relaxed">
           Loan revient de 2042 et a vu ton futur job.
           <br />
-          <span className="text-zinc-500">30 secondes pour découvrir ce qui t&apos;attend.</span>
+          <span className="text-zinc-500">
+            30 secondes pour découvrir ce qui t&apos;attend.
+          </span>
         </p>
       </div>
 
@@ -180,9 +246,26 @@ export default function Home() {
               onChange={(e) =>
                 setFormData({ ...formData, prenom: e.target.value })
               }
-              className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+              onBlur={() => {
+                if (!formData.prenom.trim()) {
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    prenom: "🔮 Loan a besoin de ton prénom pour personnaliser ta prédiction.",
+                  }));
+                } else {
+                  setFieldErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.prenom;
+                    return next;
+                  });
+                }
+              }}
+              className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
+                fieldErrors.prenom ? "border-amber-400/60" : "border-[var(--card-border)]"
+              } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
               placeholder="Ton prénom"
             />
+            <FieldError field="prenom" />
           </div>
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">
@@ -192,12 +275,23 @@ export default function Home() {
               type="email"
               required
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                if (fieldErrors.email) {
+                  setFieldErrors((prev) => {
+                    const next = { ...prev };
+                    delete next.email;
+                    return next;
+                  });
+                }
+              }}
+              onBlur={() => validateField("email", formData.email)}
+              className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
+                fieldErrors.email ? "border-amber-400/60" : "border-[var(--card-border)]"
+              } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
               placeholder="ton@email.com"
             />
+            <FieldError field="email" />
           </div>
         </div>
 
@@ -210,12 +304,23 @@ export default function Home() {
             type="text"
             required
             value={formData.ville}
-            onChange={(e) =>
-              setFormData({ ...formData, ville: e.target.value })
-            }
-            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+            onChange={(e) => {
+              setFormData({ ...formData, ville: e.target.value });
+              if (fieldErrors.ville) {
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.ville;
+                  return next;
+                });
+              }
+            }}
+            onBlur={() => validateField("ville", formData.ville)}
+            className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
+              fieldErrors.ville ? "border-amber-400/60" : "border-[var(--card-border)]"
+            } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
             placeholder="Paris, Lyon, Remote..."
           />
+          <FieldError field="ville" />
         </div>
 
         {/* LinkedIn URL */}
@@ -224,21 +329,39 @@ export default function Home() {
             Ton profil LinkedIn *
           </label>
           <input
-            type="url"
+            type="text"
             required
             value={formData.linkedinUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, linkedinUrl: e.target.value })
-            }
-            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+            onChange={(e) => {
+              setFormData({ ...formData, linkedinUrl: e.target.value });
+              if (fieldErrors.linkedinUrl) {
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.linkedinUrl;
+                  return next;
+                });
+              }
+            }}
+            onBlur={() => {
+              const result = validateField("linkedinUrl", formData.linkedinUrl);
+              if (result.valid && result.cleaned) {
+                setFormData((prev) => ({ ...prev, linkedinUrl: result.cleaned! }));
+              }
+            }}
+            className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
+              fieldErrors.linkedinUrl ? "border-amber-400/60" : "border-[var(--card-border)]"
+            } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
             placeholder="linkedin.com/in/ton-profil"
           />
-          <p className="text-xs text-zinc-600 mt-1">
-            Loan a besoin de ton profil pour voyager dans le temps.
-          </p>
+          <FieldError field="linkedinUrl" />
+          {!fieldErrors.linkedinUrl && (
+            <p className="text-xs text-zinc-600 mt-1">
+              Loan a besoin de ton profil pour voyager dans le temps.
+            </p>
+          )}
         </div>
 
-        {/* Job Title - THE KEY INPUT */}
+        {/* Job Title */}
         <div>
           <label className="block text-sm font-medium text-zinc-400 mb-1.5">
             Ton titre de poste LinkedIn *
@@ -250,12 +373,29 @@ export default function Home() {
             onChange={(e) =>
               setFormData({ ...formData, jobTitle: e.target.value })
             }
-            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+            onBlur={() => {
+              if (!formData.jobTitle.trim()) {
+                setFieldErrors((prev) => ({
+                  ...prev,
+                  jobTitle: "🔮 Sans titre de poste, Loan ne peut pas calculer ta trajectoire de carrière.",
+                }));
+              } else {
+                setFieldErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.jobTitle;
+                  return next;
+                });
+              }
+            }}
+            className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${
+              fieldErrors.jobTitle ? "border-amber-400/60" : "border-[var(--card-border)]"
+            } text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
             placeholder="Ex: Product Manager @ MerciYanis | B2B SaaS"
           />
-          <p className="text-xs text-zinc-600 mt-1">
-            Copie-le telle quelle !
-          </p>
+          <FieldError field="jobTitle" />
+          {!fieldErrors.jobTitle && (
+            <p className="text-xs text-zinc-600 mt-1">Copie-le telle quelle !</p>
+          )}
         </div>
 
         {/* Optional: Full profile */}
@@ -285,7 +425,11 @@ export default function Home() {
               placeholder="Pour un résultat ultra-personnalisé : va sur ton profil LinkedIn, fais Cmd+A (ou Ctrl+A) pour tout sélectionner, puis colle ici."
             />
             <p className="text-xs text-zinc-600">
-              💡 Astuce : Sur ta page LinkedIn, fais <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">A</kbd> puis <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> + <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">C</kbd> pour tout copier.
+              💡 Astuce : Sur ta page LinkedIn, fais{" "}
+              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> +{" "}
+              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">A</kbd> puis{" "}
+              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> +{" "}
+              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">C</kbd> pour tout copier.
             </p>
           </div>
         )}
@@ -304,7 +448,7 @@ export default function Home() {
         </button>
 
         <p className="text-xs text-zinc-600 text-center">
-          Loan revient de 2042. Marge d'erreur : le futur. Vos données restent en 2026.
+          Loan revient de 2042. Marge d&apos;erreur : le futur. Vos données restent en 2026.
         </p>
       </form>
     </div>
