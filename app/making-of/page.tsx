@@ -11,8 +11,8 @@ const TIMELINE = [
     step: "Heure 1",
     title: "Cadrer le test",
     description:
-      "Le projet a été construit sur le week-end de Pâques, en environ 6 heures, avec un cadre volontairement contraint : tester une hypothèse d'acquisition sans paid, sans cold outreach, et sans surconstruire. L'objectif n'était pas de lancer un produit fini, mais d'obtenir un premier signal réel.",
-    highlight: "Cadre · Scope borné · Signal recherché",
+      "Loan est un side project construit sur le week-end de Pâques, en environ 6 heures, pour tester rapidement une hypothèse d'acquisition sans paid ni cold outreach. Cette page documente les choix, les arbitrages et les limites du projet.",
+    highlight: "Cadre · Scope · Signal recherché",
   },
   {
     step: "Heure 2",
@@ -25,8 +25,8 @@ const TIMELINE = [
     step: "Heures 3–4",
     title: "Sortir une V0, puis reprendre la main",
     description:
-      "J'ai utilisé NanoCorp.so pour sortir une première V0 rapidement et valider le concept sans partir de zéro. Ensuite, j'ai récupéré le code pour l'itérer moi-même avec Claude Code, Dispatch, plusieurs workers et mon propre agent. L'intérêt n'était pas de montrer un setup d'agents sophistiqué, mais de passer d'un prototype généré à une base plus propre, plus contrôlée et plus alignée avec l'intention produit.",
-    highlight: "V0 rapide · Reprise en main · Itération",
+      "J'ai utilisé NanoCorp.so pour sortir une première V0 rapidement. J'ai ensuite repris le code pour l'itérer avec Claude Code, Dispatch, plusieurs workers et mon propre agent, afin de passer d'un prototype généré à une base plus propre et plus alignée avec le use case réel.",
+    highlight: "V0 · Reprise en main · Itération",
   },
   {
     step: "Heure 5",
@@ -69,14 +69,9 @@ const DECISIONS = [
       "Loan a été construit sur un temps très limité : un week-end de Pâques, environ 6 heures, avec du café, beaucoup de chocolat, et un scope volontairement borné. Le but n'était pas de maximiser ce que je pouvais construire, mais de tester vite une hypothèse d'acquisition sans dériver vers un side project infini.",
   },
   {
-    title: "Utiliser l'IA comme accélérateur, pas comme preuve",
+    title: "Reprendre la main après la V0",
     description:
-      "Ce projet m'a permis de continuer à expérimenter avec Claude Code, de tester Dispatch, et d'utiliser plusieurs workers ainsi que mon propre agent pour itérer plus vite. Mais la valeur du projet n'est pas dans le nombre d'outils utilisés : elle est dans ce que je fais du temps gagné. Ici, ce temps a servi à arbitrer, nettoyer, simplifier et confronter la V0 au réel.",
-  },
-  {
-    title: "Reprendre le contrôle après la V0",
-    description:
-      "Dire que la première version a été sortie via NanoCorp.so ne me pose pas de problème, tant que la lecture reste juste : NanoCorp m'a aidé à générer une base rapidement, puis j'ai récupéré le code pour en faire quelque chose de plus propre, plus cohérent, et plus maîtrisé. L'intérêt n'est pas d'avoir une V0 en quelques minutes ; l'intérêt est ce qu'on choisit de garder, corriger ou jeter ensuite.",
+      "NanoCorp.so m’a permis de sortir une première base rapidement. J’ai ensuite repris le code pour l’itérer, le simplifier et l’aligner avec l’intention produit. L’intérêt n’était pas la vitesse seule, mais ce qu’elle rend possible ensuite : choisir quoi garder, quoi corriger, et quoi enlever.",
   },
   {
     title: "Choisir ses batailles avec l'IA générative",
@@ -108,17 +103,28 @@ const STACK_SECTIONS = [
     items: [
       { label: "Framework", value: "Next.js 14 (App Router, Server Components)" },
       { label: "Déploiement", value: "Vercel (CI/CD depuis GitHub)" },
-      { label: "Base de données", value: "Airtable (leads) - PostgreSQL retiré" },
+      { label: "Lead capture", value: "Airtable" },
     ],
   },
-  {
-    title: "Prototypage & itération",
-    items: [
-      { label: "V0", value: "NanoCorp.so - génération rapide d'une première base" },
-      { label: "Itération", value: "Claude Code + Dispatch + workers + agent personnel" },
-      { label: "Méthode", value: "Prompting itératif, context engineering, validation humaine systématique" },
-    ],
-  },
+ {
+  title: "Prototypage & itération",
+  items: [
+    {
+      label: "Méthode",
+      value:
+        "Boucle d’itération assistée par agents : génération rapide d’une base (NanoCorp), reprise avec Claude Code, workers pour analyser / modifier / tester, feedback loop courte sur des cas réels, arbitrages produits conservés côté humain",
+    },
+    {
+      label: "V0",
+      value: "NanoCorp.so + Claude 4.5 Opus (Anthropic)",
+    },
+    {
+      label: "Itération",
+      value:
+        "Claude Code + Dispatch + workers",
+    },
+  ],
+},
   {
     title: "Choix produit sur l'IA",
     items: [
@@ -200,14 +206,13 @@ export default function MakingOfPage() {
         {/* Ce que je mesure maintenant */}
         <section className="mb-16">
           <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-            <span className="text-2xl">📊</span> Ce que je mesure maintenant
+            <span className="text-2xl">📊</span> Ce que je mesure
           </h2>
 
           <div className="p-5 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] mb-4">
             <p className="text-zinc-400 text-sm leading-relaxed">
               Le projet vient d'être mis en ligne. Je n'ai pas encore assez de données pour afficher
-              des résultats sérieux. Plutôt que d'habiller une expérimentation trop récente avec de faux
-              enseignements, je préfère montrer les signaux que je suis en train de suivre.
+              des résultats sérieux.
             </p>
           </div>
 
@@ -226,7 +231,7 @@ export default function MakingOfPage() {
         {/* Timeline */}
         <section className="mb-16">
           <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-            <span className="text-2xl">⏱</span> Séquence de travail
+            <span className="text-2xl">📅</span> Timeline
           </h2>
 
           <div className="relative">
