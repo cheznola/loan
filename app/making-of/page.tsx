@@ -11,14 +11,14 @@ const TIMELINE = [
     step: "Heure 1",
     title: "Cadrer le test",
     description:
-      "Loan est un side project construit sur le week-end de Pâques, en environ 6 heures, pour tester rapidement une hypothèse d'acquisition sans paid ni cold outreach. Cette page documente les choix, les arbitrages et les limites du projet.",
+      "Loan est un side project construit sur le week-end de Pâques, en environ 6 heures, pour tester rapidement un format de découverte sans paid ni cold outreach. Cette page documente les choix, les arbitrages et les limites du projet.",
     highlight: "Cadre · Scope · Signal recherché",
   },
   {
     step: "Heure 2",
     title: "Choisir une hypothèse assez forte pour mériter un test",
     description:
-      "Depuis novembre 2025, Nola se développe de manière organique via des dîners en petit groupe pour Product People à Paris. Le besoin : trouver un levier de découverte qui touche les bons profils, génère des leads exploitables, et reste cohérent avec l'esprit de la communauté. L'hypothèse testée : un format personnel, rapide et partageable convertira mieux qu'un contenu carrière classique.",
+      "Depuis novembre 2025, Nola se développe de manière organique via des dîners en petit groupe pour Product People à Paris. Le besoin : trouver un format de découverte qui touche les bonnes personnes, facilite la projection, et reste cohérent avec l'esprit de la communauté. L'hypothèse testée : un format personnel, rapide et partageable suscitera plus d'intérêt qu'un contenu carrière classique.",
     highlight: "Problème · Hypothèse · Ciblage",
   },
   {
@@ -46,8 +46,8 @@ const TIMELINE = [
     step: "Go-live",
     title: "Mettre en ligne sans sur-ingénierie",
     description:
-      "Connexion Airtable pour la capture des leads. Nettoyage du code récupéré depuis la V0, suppression de PostgreSQL jugé trop lourd pour ce use case, ajout du terminal 'Transmissions du futur' pour renforcer la preuve sociale, puis déploiement sur Vercel. Cette version n'est pas une V1 aboutie : c'est une V0 d'apprentissage mise au contact du réel.",
-    highlight: "Lead capture · Architecture légère · MVP live",
+      "Connexion Airtable pour stocker les soumissions. Nettoyage du code récupéré depuis la V0, suppression de PostgreSQL jugé trop lourd pour ce use case, ajout du terminal 'Transmissions du futur' pour renforcer la preuve sociale, puis déploiement sur Vercel. Cette version n'est pas une V1 aboutie : c'est une V0 d'apprentissage mise au contact du réel.",
+    highlight: "Soumissions · Architecture légère · MVP live",
   },
   {
     step: "Documentation",
@@ -66,7 +66,7 @@ const DECISIONS = [
   {
     title: "Cadrer volontairement le projet",
     description:
-      "Loan a été construit sur un temps très limité : un week-end de Pâques, environ 6 heures, avec du café, beaucoup de chocolat, et un scope volontairement borné. Le but n'était pas de maximiser ce que je pouvais construire, mais de tester vite une hypothèse d'acquisition sans dériver vers un side project infini.",
+      "Loan a été construit sur un temps très limité : un week-end de Pâques, environ 6 heures, avec du café, beaucoup de chocolat, et un scope volontairement borné. Le but n'était pas de maximiser ce que je pouvais construire, mais de tester vite un format de découverte sans dériver vers un side project infini.",
   },
   {
     title: "Reprendre la main après la V0",
@@ -87,7 +87,7 @@ const DECISIONS = [
 const METRICS = [
   "Visite → démarrage du parcours",
   "Démarrage → complétion",
-  "Complétion → lead capturé",
+  "Complétion → soumission envoyée",
   "Qualité des profils entrants",
   "Part de trafic organique / partage",
   "Retours qualitatifs sur la pertinence du résultat",
@@ -103,7 +103,7 @@ const STACK_SECTIONS = [
     items: [
       { label: "Framework", value: "Next.js 14 (App Router, Server Components)" },
       { label: "Déploiement", value: "Vercel (CI/CD depuis GitHub)" },
-      { label: "Lead capture", value: "Airtable" },
+      { label: "Stockage", value: "Airtable" },
     ],
   },
  {
@@ -179,7 +179,7 @@ export default function MakingOfPage() {
 
           <p className="text-zinc-500 mt-4 leading-relaxed">
             Loan est un side project construit sur le week-end de Pâques, en environ 6 heures,
-            avec un cadre volontairement contraint : tester rapidement une hypothèse d'acquisition
+            avec un cadre volontairement contraint : tester rapidement un format de découverte
             sans paid, sans cold outreach, et sans surconstruire. Ce document retrace les choix,
             les arbitrages, les limites, et la manière dont j'ai utilisé les outils IA pour accélérer
             l'exécution sans leur déléguer le jugement produit.
@@ -196,10 +196,10 @@ export default function MakingOfPage() {
             La communauté grandit par cooptation et le flux reste artisanal.
           </p>
           <p className="text-zinc-400 leading-relaxed">
-            L'enjeu : trouver un levier d'acquisition qui <strong>cible les bons profils</strong> (PM, PO, CPO...),
-            <strong> génère des leads exploitables</strong> (email + profil LinkedIn),
-            et <strong> reste cohérent avec l'esprit de Nola</strong>, sans paid ni cold outreach.
-            Un lead magnet viral était une piste à tester.
+            L'enjeu : trouver un format de découverte qui <strong>touche les bonnes personnes</strong> (PM, PO, CPO...),
+            <strong> suscite l'intérêt</strong> et permette à chacun de se projeter,
+            tout en <strong>restant cohérent avec l'esprit de Nola</strong>, sans paid ni cold outreach.
+            Un format personnel et partageable était une piste à tester.
           </p>
         </section>
 
