@@ -20,6 +20,7 @@ export default function Home() {
   const [formData, setFormData] = useState({
     prenom: "",
     email: "",
+    ville: "",
     linkedinUrl: "",
     jobTitle: "",
     profileText: "",
@@ -51,7 +52,7 @@ export default function Home() {
 
     // Theatrical loader: cycle messages + progress bar
     let msgIndex = 0;
-    const totalDuration = 4000; // 4 seconds of theatre
+    const totalDuration = 5000; // 5 seconds of theatre
     const intervalTime = 500;
     let elapsed = 0;
 
@@ -80,6 +81,7 @@ export default function Home() {
           body: JSON.stringify({
             prenom: formData.prenom,
             email: formData.email,
+            ville: formData.ville,
             linkedinUrl: formData.linkedinUrl,
             profileText: combinedProfile,
           }),
@@ -197,6 +199,23 @@ export default function Home() {
               placeholder="ton@email.com"
             />
           </div>
+        </div>
+
+        {/* Ville */}
+        <div>
+          <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+            Ville *
+          </label>
+          <input
+            type="text"
+            required
+            value={formData.ville}
+            onChange={(e) =>
+              setFormData({ ...formData, ville: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition"
+            placeholder="Paris, Lyon, Remote..."
+          />
         </div>
 
         {/* LinkedIn URL */}
