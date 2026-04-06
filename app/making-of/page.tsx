@@ -112,11 +112,11 @@ const STACK_SECTIONS = [
     {
       label: "Méthode",
       value:
-        "Boucle d’itération assistée par agents : génération rapide d’une base (NanoCorp), reprise avec Claude Code, workers pour analyser / modifier / tester, feedback loop courte sur des cas réels, arbitrages produits conservés côté humain",
+        "Boucle agentique courte, avec validation produit humaine",
     },
     {
       label: "V0",
-      value: "NanoCorp.so + Claude 4.5 Opus (Anthropic)",
+      value: "NanoCorp.so + Claude 4.5 Opus",
     },
     {
       label: "Itération",
