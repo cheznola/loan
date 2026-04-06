@@ -774,9 +774,9 @@ ${egg.description}
 
 Ce futur est incroyable, et tu ne pourras pas dire que tu n'étais pas au courant.`;
 
-  const shareText = `🔮 Je viens de découvrir mon job en 2042 grâce à Loan... Apparemment, en 2042 je serai ${egg.futureJob} ! ${egg.description} Découvre ton futur job ici : https://loan-rho-two.vercel.app #2042 #FuturJob`;
+  const shareText = `🔮 Je viens de découvrir mon job en 2042 grâce à Loan... Apparemment, en 2042 je serai ${egg.futureJob} ! ${egg.description} Découvre ton futur job ici : https://loan2042.vercel.app #2042 #FuturJob`;
 
-  const slackText = `🔮 Selon Loan (qui revient de 2042), mon futur job sera : *${egg.futureJob}* ! Teste le tien → https://loan-rho-two.vercel.app`;
+  const slackText = `🔮 Selon Loan (qui revient de 2042), mon futur job sera : *${egg.futureJob}* ! Teste le tien → https://loan2042.vercel.app`;
 
   return {
     currentJob: egg.currentJob,
@@ -810,9 +810,9 @@ ${job.description}
 
 Ce futur est incroyable, et tu ne pourras pas dire que tu n'étais pas au courant.`;
 
-  const shareText = `🔮 Je viens de découvrir mon job en 2042 grâce à Loan... Apparemment, en 2042 je serai ${futureJob} ! ${job.description} Découvre ton futur job ici : https://loan-rho-two.vercel.app #2042 #FuturJob`;
+  const shareText = `🔮 Je viens de découvrir mon job en 2042 grâce à Loan... Apparemment, en 2042 je serai ${futureJob} ! ${job.description} Découvre ton futur job ici : https://loan2042.vercel.app #2042 #FuturJob`;
 
-  const slackText = `🔮 Selon Loan (qui revient de 2042), mon futur job sera : *${futureJob}* ! Teste le tien → https://loan-rho-two.vercel.app`;
+  const slackText = `🔮 Selon Loan (qui revient de 2042), mon futur job sera : *${futureJob}* ! Teste le tien → https://loan2042.vercel.app`;
 
   return {
     currentJob,
