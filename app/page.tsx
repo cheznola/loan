@@ -494,13 +494,13 @@ export default function Home() {
                   jobTitle: SHORT_ERRORS.jobTitle.gibberish,
                 }));
               }
-            }}}
+            }}
             className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${borderClass("jobTitle")} text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
-            placeholder="Ex: Product Manager @ MerciYanis | B2B SaaS"
+            placeholder="Ex: First Product Manager @MerciYanis"
           />
           <FieldError field="jobTitle" />
           {!fieldErrors.jobTitle && (
-            <p className="text-xs text-zinc-600 mt-1">Copie-le telle quelle !</p>
+            <p className="text-xs text-zinc-600 mt-1">Copie-le tel quel !</p>
           )}
         </div>
 
