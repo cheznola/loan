@@ -720,8 +720,90 @@ Ce futur est incroyable, et tu ne pourras pas dire que tu n'étais pas au couran
   };
 }
 
+// === SERVER-SIDE VALIDATION ===
+
+const DISPOSABLE_DOMAINS = new Set([
+  'mailinator.com', 'yopmail.com', 'guerrillamail.com', 'tempmail.com',
+  'throwaway.email', 'trashmail.com', 'fakeinbox.com', 'sharklasers.com',
+  'guerrillamailblock.com', 'grr.la', 'dispostable.com', 'maildrop.cc',
+  'temp-mail.org', 'mohmal.com', 'burnermail.io', 'mailnesia.com',
+  'getnada.com', 'emailondeck.com', 'mintemail.com', 'tempail.com',
+  'harakirimail.com', 'jetable.org', 'incognitomail.org', 'mailcatch.com',
+  'mytemp.email', 'spamgourmet.com', 'trashmail.me', 'tempr.email',
+  '10minutemail.com', 'crazymailing.com',
+]);
+
+const BLACKLISTED_EMAILS = new Set([
+  'test@test.com', 'test@gmail.com', 'test@email.com', 'test@mail.com',
+  'a@a.com', 'aa@aa.com', 'aaa@aaa.com', 'abc@abc.com',
+  'email@email.com', 'mail@mail.com', 'user@user.com',
+  'admin@admin.com', 'info@info.com', 'no@no.com',
+  'fake@fake.com', 'none@none.com', 'nope@nope.com',
+  'test@test.fr', 'test@gmail.fr', 'a@gmail.com',
+  'qwerty@gmail.com', 'asdf@gmail.com', 'azerty@gmail.com',
+]);
+
+function serverValidateEmail(email: string): string | null {
+  const trimmed = email.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+    return "Format d'email invalide";
+  }
+  const [local, domain] = trimmed.split('@');
+  if (BLACKLISTED_EMAILS.has(trimmed)) {
+    return "🔮 Loan ne voyage pas dans le temps pour des fausses adresses. Mets ton vrai email !";
+  }
+  if (DISPOSABLE_DOMAINS.has(domain)) {
+    return "🔮 Les emails jetables n'existent plus en 2042. Utilise ton vrai email !";
+  }
+  if (local.length < 3) {
+    return "🔮 Email trop court pour être réel.";
+  }
+  // Gibberish: vowel ratio check
+  const cleaned = local.replace(/[0-9._-]/g, '');
+  if (cleaned.length >= 2) {
+    const vowels = cleaned.match(/[aeiouyàâäéèêëïîôùûüœæ]/gi) || [];
+    const ratio = vowels.length / cleaned.length;
+    if (ratio < 0.12 || ratio > 0.88) {
+      return "🔮 Cet email ne ressemble pas à un vrai email. Ton futur job mérite une vraie adresse !";
+    }
+    if (/[^aeiouyàâäéèêëïîôùûüœæ]{5,}/i.test(cleaned)) {
+      return "🔮 Cet email ne ressemble pas à un vrai email. Ton futur job mérite une vraie adresse !";
+    }
+  }
+  return null;
+}
+
+function serverValidateLinkedIn(url: string): string | null {
+  const trimmed = url.trim();
+  if (!trimmed) return "URL LinkedIn requise";
+  // Accept slug only
+  if (/^[\w-]+$/.test(trimmed) && trimmed.length >= 3) return null;
+  const linkedinRegex = /^(https?:\/\/)?([\w-]+\.)?linkedin\.com\/in\/([\w-]+)\/?(\?.*)?$/i;
+  if (!linkedinRegex.test(trimmed)) {
+    if (/linkedin\.com/i.test(trimmed)) {
+      return "🔮 Loan a besoin de ton profil personnel (linkedin.com/in/ton-nom), pas d'une page entreprise.";
+    }
+    return "🔮 Ça ne ressemble pas à un profil LinkedIn valide.";
+  }
+  return null;
+}
+
+function serverValidateVille(ville: string): string | null {
+  const trimmed = ville.trim();
+  if (!trimmed) return "Ville requise";
+  const remoteVariants = new Set(['remote', 'full remote', 'fullremote', 'télétravail', 'teletravail', 'à distance', 'a distance', '100% remote']);
+  if (remoteVariants.has(trimmed.toLowerCase())) return null;
+  if (trimmed.length < 2) return "Ville trop courte";
+  if (trimmed.length > 60) return "Ville trop longue";
+  if (/^\d+$/.test(trimmed)) return "🔮 Loan a besoin du nom de ta ville, pas du code postal.";
+  if (/[@#$%^&*(){}[\]|\\/<>]/.test(trimmed)) return "Ce n'est pas un nom de ville valide.";
+  if (!/[a-zA-ZÀ-ÿ]/.test(trimmed)) return "Ce n'est pas un nom de ville valide.";
+  if (/^(.)\1{3,}$/i.test(trimmed.replace(/\s/g, ''))) return "Ce n'est pas un nom de ville valide.";
+  return null;
+}
+
 export async function POST(request: NextRequest) {
-  console.log("[predict] Algorithmic endpoint v6-airtable hit");
+  console.log("[predict] Algorithmic endpoint v7-validated hit");
   try {
     const body = await request.json();
     const { prenom, email, ville, linkedinUrl, profileText } = body;
@@ -731,6 +813,22 @@ export async function POST(request: NextRequest) {
         { error: "Prénom, email et titre de poste sont requis" },
         { status: 400 }
       );
+    }
+
+    // === SERVER-SIDE VALIDATION — blocks before Airtable save ===
+    const emailError = serverValidateEmail(email);
+    if (emailError) {
+      return NextResponse.json({ error: emailError }, { status: 400 });
+    }
+
+    const linkedinError = serverValidateLinkedIn(linkedinUrl || "");
+    if (linkedinError) {
+      return NextResponse.json({ error: linkedinError }, { status: 400 });
+    }
+
+    const villeError = serverValidateVille(ville || "");
+    if (villeError) {
+      return NextResponse.json({ error: villeError }, { status: 400 });
     }
 
     // Extract job title (first line) and profile text (rest)
