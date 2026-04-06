@@ -8,74 +8,98 @@ import Link from "next/link";
 
 const TIMELINE = [
   {
-    day: "Jour 0",
-    title: "Le problème d'acquisition",
-    description: "Depuis novembre 2025, Nola se développe de manière organique avec un format simple : une édition mensuelle à Paris, autour de dîners en petit groupe (4 à 6 Product People par table). Je cherche à faire découvrir cette initiative aux bonnes personnes, sans paid ni cold outreach, tout en gardant une croissance volontairement progressive et la qualité des échanges.",
-    highlight: "Acquisition · Lead generation · Ciblage",
+    step: "Heure 1",
+    title: "Cadrer le test",
+    description:
+      "Le projet a été construit sur le week-end de Pâques, en environ 6 heures, avec un cadre volontairement contraint : tester une hypothèse d'acquisition sans paid, sans cold outreach, et sans surconstruire. L'objectif n'était pas de lancer un produit fini, mais d'obtenir un premier signal réel.",
+    highlight: "Cadre · Scope borné · Signal recherché",
   },
   {
-    day: "Jour 1",
-    title: "L'hypothèse : lead magnet viral",
-    description: "En testant NanoCorp.so (plateforme pour lancer et opérer des micro-entreprises autonomes pilotées par des agents IA), je teste de prototyper une idée en 1h. L'idée : un générateur humoristique de 'job en 2042' basé sur le profil LinkedIn. Viral par nature (ego + humour + partage), ciblé (les PMs se reconnaissent), et capture naturellement les données dont j'ai besoin. Après tout, quel Product ne s’est pas déjà demandé comment son métier va évoluer dans les prochaines années… voire les prochaines semaines ?",
-    highlight: "Hypothèse · Viralité · NanoCorp",
+    step: "Heure 2",
+    title: "Choisir une hypothèse assez forte pour mériter un test",
+    description:
+      "Depuis novembre 2025, Nola se développe de manière organique via des dîners en petit groupe pour Product People à Paris. Le besoin : trouver un levier de découverte qui touche les bons profils, génère des leads exploitables, et reste cohérent avec l'esprit de la communauté. L'hypothèse testée : un format personnel, rapide et partageable convertira mieux qu'un contenu carrière classique.",
+    highlight: "Problème · Hypothèse · Ciblage",
   },
   {
-    day: "Jour 2",
-    title: "Arbitrage structurant : pas d'API IA",
-    description: "Premier choix produit : ne PAS utiliser de génération IA pour les résultats. Les raisons : coût par requête (chaque prédiction coûterait ~0.05€), latence (2-3s vs instantané), et surtout qualité de l'humour : l'IA génère du 'drôle générique', pas du 'drôle métier'. J'opte pour un système combinatoire : 12 catégories × 5 jobs × variations = 2160 combinaisons, pré-écrites avec le bon ton.",
-    highlight: "Trade-off · Coût vs qualité · Architecture",
+    step: "Heures 3–4",
+    title: "Sortir une V0, puis reprendre la main",
+    description:
+      "J'ai utilisé NanoCorp.so pour sortir une première V0 rapidement et valider le concept sans partir de zéro. Ensuite, j'ai récupéré le code pour l'itérer moi-même avec Claude Code, Dispatch, plusieurs workers et mon propre agent. L'intérêt n'était pas de montrer un setup d'agents sophistiqué, mais de passer d'un prototype généré à une base plus propre, plus contrôlée et plus alignée avec l'intention produit.",
+    highlight: "V0 rapide · Reprise en main · Itération",
   },
   {
-    day: "Jour 3",
-    title: "L'algo de détection",
-    description: "Travail en itération sur GitHub avec Claude : 800+ mots-clés par catégorie métier, scoring pondéré (titre LinkedIn = x5), nettoyage du bruit de sidebar. Mon rôle : donner le contexte métier, challenger les edge cases, valider que 'PM' matche bien PRODUCT et pas autre chose. L'agent IA exécute vite : le jugement produit reste humain.",
-    highlight: "Prompt engineering · Itération · GitHub",
+    step: "Heure 5",
+    title: "Faire le choix produit le plus structurant",
+    description:
+      "J'ai décidé de ne PAS utiliser de génération IA à la volée pour les résultats. Les raisons : coût récurrent inutile pour ce use case, latence plus élevée, et surtout perte de contrôle sur le ton. À la place, j'ai choisi une logique combinatoire pré-écrite : catégories, métiers et variations. Ici, le bon choix n'était pas 'plus d'IA', mais plus de contrôle produit.",
+    highlight: "Trade-off · Contrôle du ton · Coût & latence",
   },
   {
-    day: "Jour 4",
-    title: "Le bug que les tests ne voyaient pas",
-    description: "Tests unitaires : OK. Vrais profils LinkedIn (3000+ mots de bruit) : tous tombent en DESIGN. Root cause : le mot 'designed' apparaît dans 80% des descriptions d'expérience ('I designed a process...'). Le fix : passer d'un first-match à un occurrence counting, et filtrer le bruit LinkedIn. Rappel classique : les données synthétiques mentent.",
-    highlight: "Debug · Données réelles · Itération",
+    step: "Heure 6",
+    title: "Confronter le système au réel",
+    description:
+      "Les tests propres passaient. Les vrais profils LinkedIn, beaucoup moins. Beaucoup de bruit, des sidebars, des formulations ambiguës, et un bug révélateur : des mots comme 'designed' faisaient tomber trop de profils dans DESIGN. Le correctif a consisté à passer d'un matching naïf à un scoring pondéré avec nettoyage du bruit. Rappel utile : les données synthétiques rassurent plus qu'elles n'apprennent.",
+    highlight: "Données réelles · Bug révélateur · Correction",
   },
   {
-    day: "Jour 5",
-    title: "Intégration et go-live",
-    description: "Connexion Airtable pour la capture des leads. Récupération du code brut produit par NanoCorp, puis nettoyage complet : suppression de PostgreSQL, trop lourd pour ce use case. Ajout du terminal 'Transmissions du futur' (social proof en temps réel). Déploiement sur Vercel. Premiers tests avec de vrais utilisateurs.",
-    highlight: "Lead capture · Déploiement · MVP live",
+    step: "Go-live",
+    title: "Mettre en ligne sans sur-ingénierie",
+    description:
+      "Connexion Airtable pour la capture des leads. Nettoyage du code récupéré depuis la V0, suppression de PostgreSQL jugé trop lourd pour ce use case, ajout du terminal 'Transmissions du futur' pour renforcer la preuve sociale, puis déploiement sur Vercel. Cette version n'est pas une V1 aboutie : c'est une V0 d'apprentissage mise au contact du réel.",
+    highlight: "Lead capture · Architecture légère · MVP live",
   },
   {
-    day: "Jour 6",
-    title: "Documentation du process",
-    description: "Cette page. Un side project non documenté est un side project invisible. L'objectif : montrer le raisonnement, pas juste le livrable.",
-    highlight: "Storytelling · Personal branding",
+    step: "Documentation",
+    title: "Documenter le raisonnement, pas seulement le livrable",
+    description:
+      "Cette page existe pour rendre visibles les décisions, les arbitrages et les limites. Un side project peut être amusant à regarder ; ce qui m'intéresse ici, c'est de montrer comment il a été cadré, ce qu'il permet de tester, et ce qu'il ne prouve pas encore.",
+    highlight: "Arbitrages · Limites · Documentation",
   },
 ];
 
 // ============================================
-// CONVICTIONS APPLIQUÉES (pas "learnings")
+// CHOIX STRUCTURANTS
 // ============================================
 
-const CONVICTIONS = [
+const DECISIONS = [
   {
-    title: "Ship fast, learn faster",
-    description: "Loan est sorti en 2 jours, avec des bugs connus et des features manquantes. Ce n'est pas de l'improvisation, c'est un choix : une V1 live génère du feedback réel, une V1 dans un doc ne génère rien. J'applique ce principe depuis mes débuts en Product.",
+    title: "Cadrer volontairement le projet",
+    description:
+      "Loan a été construit sur un temps très limité : un week-end de Pâques, environ 6 heures, avec du café, beaucoup de chocolat, et un scope volontairement borné. Le but n'était pas de maximiser ce que je pouvais construire, mais de tester vite une hypothèse d'acquisition sans dériver vers un side project infini.",
   },
   {
-    title: "L'IA est un accélérateur, pas un décideur",
-    description: "J'utilise des agents IA quotidiennement dans mon travail. Leur force : exécuter vite, explorer plus de pistes, réduire le coût cognitif des tâches répétitives. Leur limite : ils n'ont pas le contexte métier, le jugement produit, le 'pourquoi'. Sur Loan, l'IA a écrit 90% du code : mais l'orchestration et les arbitrages (pas de génération IA, scoring pondéré, gestion du bruit) sont des décisions humaines.",
+    title: "Utiliser l'IA comme accélérateur, pas comme preuve",
+    description:
+      "Ce projet m'a permis de continuer à expérimenter avec Claude Code, de tester Dispatch, et d'utiliser plusieurs workers ainsi que mon propre agent pour itérer plus vite. Mais la valeur du projet n'est pas dans le nombre d'outils utilisés : elle est dans ce que je fais du temps gagné. Ici, ce temps a servi à arbitrer, nettoyer, simplifier et confronter la V0 au réel.",
   },
   {
-    title: "Les données synthétiques mentent",
-    description: "Mes tests avec des profils de 50 mots passaient. Les vrais profils LinkedIn (3000+ mots, sidebar, bruit) plantaient. Ce n'est pas nouveau, mais c'est un rappel : valider avec du réel le plus tôt possible.",
+    title: "Reprendre le contrôle après la V0",
+    description:
+      "Dire que la première version a été sortie via NanoCorp.so ne me pose pas de problème, tant que la lecture reste juste : NanoCorp m'a aidé à générer une base rapidement, puis j'ai récupéré le code pour en faire quelque chose de plus propre, plus cohérent, et plus maîtrisé. L'intérêt n'est pas d'avoir une V0 en quelques minutes ; l'intérêt est ce qu'on choisit de garder, corriger ou jeter ensuite.",
   },
   {
     title: "Choisir ses batailles avec l'IA générative",
-    description: "Il était tentant de laisser l'IA générer les jobs 2042 à la volée : plus de variété, moins d'effort de rédaction. Mais : latence, coût récurrent, et surtout perte de contrôle sur le ton. 2160 combinaisons pré-écrites suffisent pour que chaque résultat semble unique. Le choix 'pas d'IA' était un choix produit, pas une contrainte technique.",
+    description:
+      "Il aurait été tentant de laisser l'IA générer les jobs 2042 à la volée. J'ai préféré ne pas le faire : coût par requête, latence, qualité de l'humour trop générique, et perte de contrôle sur le ton. Une logique combinatoire pré-écrite suffisait pour ce test. Le choix 'pas d'API IA' n'était pas une contrainte technique : c'était un choix produit.",
   },
 ];
 
 // ============================================
-// STACK - Orientée maîtrise IA
+// METRICS TO WATCH
+// ============================================
+
+const METRICS = [
+  "Visite → démarrage du parcours",
+  "Démarrage → complétion",
+  "Complétion → lead capturé",
+  "Qualité des profils entrants",
+  "Part de trafic organique / partage",
+  "Retours qualitatifs sur la pertinence du résultat",
+];
+
+// ============================================
+// STACK
 // ============================================
 
 const STACK_SECTIONS = [
@@ -88,18 +112,18 @@ const STACK_SECTIONS = [
     ],
   },
   {
-    title: "IA & Agents",
+    title: "Prototypage & itération",
     items: [
-      { label: "Agent principal", value: "Claude 4.5 Opus (Anthropic)" },
-      { label: "Plateforme d'orchestration", value: "NanoCorp.so - agents IA pour le prototypage" },
-      { label: "Méthode de travail", value: "Prompting itératif, context engineering, validation humaine systématique" },
+      { label: "V0", value: "NanoCorp.so - génération rapide d'une première base" },
+      { label: "Itération", value: "Claude Code + Dispatch + workers + agent personnel" },
+      { label: "Méthode", value: "Prompting itératif, context engineering, validation humaine systématique" },
     ],
   },
   {
     title: "Choix produit sur l'IA",
     items: [
-      { label: "Génération des résultats", value: "Algorithmique (pas d'API IA) - contrôle du ton, coût nul, latence zéro" },
-      { label: "Détection de catégorie", value: "Scoring pondéré + 800 mots-clés - pas de classification IA" },
+      { label: "Génération des résultats", value: "Algorithmique (pas d'API IA) - contrôle du ton, coût nul, latence instantanée" },
+      { label: "Détection de catégorie", value: "Scoring pondéré + mots-clés - pas de classification IA" },
     ],
   },
 ];
@@ -115,42 +139,44 @@ export default function MakingOfPage() {
         
         {/* Header */}
         <div className="mb-12">
-          <Link 
+          <Link
             href="/"
             className="text-zinc-500 hover:text-white transition text-sm mb-6 inline-flex items-center gap-1"
           >
             ← Retour à Loan
           </Link>
-          
+
           <h1 className="text-3xl sm:text-4xl font-bold mt-4 mb-3">
             De l'idée au go-live en 2 jours
           </h1>
-          
+
           <p className="text-zinc-400 text-lg leading-relaxed">
             Par{" "}
-            <a 
-              href="https://www.linkedin.com/in/emmanueldimarco/" 
-              target="_blank" 
+            <a
+              href="https://www.linkedin.com/in/emmanueldimarco/"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-[var(--accent-light)] hover:underline"
             >
               Manu
             </a>
             {" "}— Product Manager, fondateur de{" "}
-            <a 
-              href="https://cheznola.fr" 
-              target="_blank" 
+            <a
+              href="https://cheznola.fr"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-[var(--accent-light)] hover:underline"
             >
               Nola
             </a>
           </p>
-          
+
           <p className="text-zinc-500 mt-4 leading-relaxed">
-            Loan est un side project construit en 2 jours pour résoudre un problème 
-            concret : générer des leads qualifiés pour une communauté de Product People. 
-            Ce document retrace les choix, les arbitrages, et le travail avec des agents IA.
+            Loan est un side project construit sur le week-end de Pâques, en environ 6 heures,
+            avec un cadre volontairement contraint : tester rapidement une hypothèse d'acquisition
+            sans paid, sans cold outreach, et sans surconstruire. Ce document retrace les choix,
+            les arbitrages, les limites, et la manière dont j'ai utilisé les outils IA pour accélérer
+            l'exécution sans leur déléguer le jugement produit.
           </p>
         </div>
 
@@ -160,40 +186,67 @@ export default function MakingOfPage() {
             🎯 Le problème
           </h2>
           <p className="text-zinc-300 leading-relaxed mb-3">
-            <strong>Nola</strong> organise des dîners mensuels pour les Product People à Paris. 
-            La communauté grandit par cooptation et le flux reste artisanal. 
+            <strong>Nola</strong> organise des dîners mensuels pour les Product People à Paris.
+            La communauté grandit par cooptation et le flux reste artisanal.
           </p>
           <p className="text-zinc-400 leading-relaxed">
-            L'enjeu : trouver un levier d'acquisition qui <strong>cible les bons profils</strong> (PM, PO, CPO...), 
-            <strong> génère des leads exploitables</strong> (email + profil LinkedIn), 
-            et <strong>scale sans budget pub</strong>. Un lead magnet viral était une piste à tester.
+            L'enjeu : trouver un levier d'acquisition qui <strong>cible les bons profils</strong> (PM, PO, CPO...),
+            <strong> génère des leads exploitables</strong> (email + profil LinkedIn),
+            et <strong> reste cohérent avec l'esprit de Nola</strong>, sans paid ni cold outreach.
+            Un lead magnet viral était une piste à tester.
           </p>
+        </section>
+
+        {/* Ce que je mesure maintenant */}
+        <section className="mb-16">
+          <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+            <span className="text-2xl">📊</span> Ce que je mesure maintenant
+          </h2>
+
+          <div className="p-5 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] mb-4">
+            <p className="text-zinc-400 text-sm leading-relaxed">
+              Le projet vient d'être mis en ligne. Je n'ai pas encore assez de données pour afficher
+              des résultats sérieux. Plutôt que d'habiller une expérimentation trop récente avec de faux
+              enseignements, je préfère montrer les signaux que je suis en train de suivre.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {METRICS.map((metric, i) => (
+              <div
+                key={i}
+                className="p-4 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-sm text-zinc-300"
+              >
+                {metric}
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* Timeline */}
         <section className="mb-16">
           <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-            <span className="text-2xl">📅</span> Timeline
+            <span className="text-2xl">⏱</span> Séquence de travail
           </h2>
-          
+
           <div className="relative">
-            {/* Vertical line */}
             <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-zinc-800" />
-            
+
             <div className="space-y-6">
               {TIMELINE.map((item, i) => (
                 <div key={i} className="relative pl-8">
-                  {/* Dot */}
-                  <div className={`absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 ${
-                    i === TIMELINE.length - 1 
-                      ? 'bg-[var(--accent)] border-[var(--accent)]' 
-                      : 'bg-zinc-900 border-zinc-700'
-                  }`} />
-                  
+                  <div
+                    className={`absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 ${
+                      i === TIMELINE.length - 1
+                        ? "bg-[var(--accent)] border-[var(--accent)]"
+                        : "bg-zinc-900 border-zinc-700"
+                    }`}
+                  />
+
                   <div className="p-4 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)]">
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3 mb-2 flex-wrap">
                       <span className="text-[var(--accent-light)] font-semibold text-sm">
-                        {item.day}
+                        {item.step}
                       </span>
                       <span className="text-zinc-600 text-xs px-2 py-0.5 bg-zinc-800/50 rounded">
                         {item.highlight}
@@ -210,15 +263,15 @@ export default function MakingOfPage() {
           </div>
         </section>
 
-        {/* Convictions appliquées */}
+        {/* Choix structurants */}
         <section className="mb-16">
           <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-            <span className="text-2xl">🎯</span> Convictions appliquées
+            <span className="text-2xl">🎯</span> Choix structurants
           </h2>
-          
+
           <div className="grid gap-4">
-            {CONVICTIONS.map((item, i) => (
-              <div 
+            {DECISIONS.map((item, i) => (
+              <div
                 key={i}
                 className="p-5 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)]"
               >
@@ -231,15 +284,15 @@ export default function MakingOfPage() {
           </div>
         </section>
 
-        {/* Stack - Réorganisée par sections */}
+        {/* Stack */}
         <section className="mb-16">
           <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
             <span className="text-2xl">🛠</span> Stack & approche IA
           </h2>
-          
+
           <div className="space-y-4">
             {STACK_SECTIONS.map((section, i) => (
-              <div 
+              <div
                 key={i}
                 className="p-5 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)]"
               >
@@ -263,10 +316,10 @@ export default function MakingOfPage() {
         <section className="text-center py-8 border-t border-zinc-800">
           <h2 className="text-xl font-semibold mb-3">Envie d'échanger ?</h2>
           <p className="text-zinc-400 mb-6">
-            Product Manager, actuellement en recherche d'opportunités.<br/>
+            Product Manager, actuellement en recherche d'opportunités.<br />
             Je fais aussi dîner des Product People avec Nola.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="https://www.linkedin.com/in/emmanueldimarco/"
@@ -292,7 +345,7 @@ export default function MakingOfPage() {
 
         {/* Footer signature */}
         <div className="text-center text-zinc-600 text-sm pt-8">
-          Side project, shipping réel, arbitrages assumés.
+          Side project, cadre volontairement contraint, arbitrages assumés.
         </div>
       </div>
     </div>
