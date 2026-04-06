@@ -8,6 +8,7 @@ const AIRTABLE_TABLE = "Transmission";
 async function saveToAirtable(data: {
   prenom: string;
   email: string;
+  ville: string;
   linkedinUrl: string;
   jobTitle: string;
   profileText?: string;
@@ -32,6 +33,7 @@ async function saveToAirtable(data: {
               fields: {
                 Prénom: data.prenom,
                 Email: data.email,
+                Ville: data.ville,
                 "Profil LinkedIn": data.linkedinUrl,
                 "Titre de poste LinkedIn": data.jobTitle,
                 "Profil complet": data.profileText || "",
@@ -722,7 +724,7 @@ export async function POST(request: NextRequest) {
   console.log("[predict] Algorithmic endpoint v6-airtable hit");
   try {
     const body = await request.json();
-    const { prenom, email, linkedinUrl, profileText } = body;
+    const { prenom, email, ville, linkedinUrl, profileText } = body;
 
     if (!prenom || !email || !profileText) {
       return NextResponse.json(
@@ -740,6 +742,7 @@ export async function POST(request: NextRequest) {
     saveToAirtable({
       prenom,
       email,
+      ville: ville || "",
       linkedinUrl: linkedinUrl || "",
       jobTitle,
       profileText: fullProfileText,
