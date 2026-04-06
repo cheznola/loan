@@ -44,6 +44,7 @@ const SHORT_ERRORS: Record<string, Record<string, string>> = {
   },
   jobTitle: {
     required: "🔮 Sans titre, Loan ne peut pas prédire.",
+    gibberish: "🔮 Ça ne ressemble pas à un titre de poste.",
   },
 };
 
@@ -66,14 +67,46 @@ export default function Home() {
   // Field-level errors
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Gibberish check helper (vowel ratio + consecutive consonants)
+  // Gibberish check helper (vowel ratio + consecutive consonants + repeating patterns)
   const isGibberish = (text: string): boolean => {
     const cleaned = text.trim().replace(/[\s\-'.]/g, '');
-    if (cleaned.length < 3) return false;
-    const vowels = cleaned.match(/[aeiouyàâäéèêëïîôùûüœæ]/gi) || [];
-    const ratio = vowels.length / cleaned.length;
+    if (cleaned.length < 4) return false;
+    const lower = cleaned.toLowerCase();
+
+    // Check 1: vowel ratio too low
+    const vowels = lower.match(/[aeiouyàâäéèêëïîôùûüœæ]/gi) || [];
+    const ratio = vowels.length / lower.length;
     if (ratio < 0.15) return true;
-    if (/[^aeiouyàâäéèêëïîôùûüœæ]{5,}/i.test(cleaned)) return true;
+
+    // Check 2: 5+ consecutive consonants
+    if (/[^aeiouyàâäéèêëïîôùûüœæ]{5,}/i.test(lower)) return true;
+
+    // Check 3: repeating pattern (1-3 char pattern repeated 2+ times covering whole string)
+    if (/^(.{1,3})\1{2,}$/i.test(lower)) return true;
+
+    // Check 4: same char repeated 3+ times → "aaaa", "rrrrr"
+    if (/(.)\1{2,}/i.test(lower)) return true;
+
+    // Check 5: only 1-2 unique characters in 5+ length → "abababab", "rerere"
+    if (lower.length >= 5) {
+      const uniqueChars = new Set(lower.split('')).size;
+      if (uniqueChars <= 2) return true;
+    }
+
+    // Check 6: any 2-3 char substring that appears many times relative to string length
+    if (lower.length >= 5) {
+      for (let len = 2; len <= 3; len++) {
+        for (let start = 0; start <= lower.length - len; start++) {
+          const sub = lower.slice(start, start + len);
+          const escaped = sub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const matches = lower.match(new RegExp(escaped, 'g'));
+          const count = matches ? matches.length : 0;
+          // If this short pattern covers 80%+ of the string, it's gibberish
+          if (count >= 3 && (count * len) >= lower.length * 0.8) return true;
+        }
+      }
+    }
+
     return false;
   };
 
@@ -183,6 +216,8 @@ export default function Home() {
     // Job Title
     if (!formData.jobTitle.trim()) {
       errors.jobTitle = SHORT_ERRORS.jobTitle.required;
+    } else if (isGibberish(formData.jobTitle.trim())) {
+      errors.jobTitle = SHORT_ERRORS.jobTitle.gibberish;
     }
 
     setFieldErrors(errors);
@@ -453,8 +488,13 @@ export default function Home() {
                   ...prev,
                   jobTitle: SHORT_ERRORS.jobTitle.required,
                 }));
+              } else if (isGibberish(formData.jobTitle.trim())) {
+                setFieldErrors((prev) => ({
+                  ...prev,
+                  jobTitle: SHORT_ERRORS.jobTitle.gibberish,
+                }));
               }
-            }}
+            }}}
             className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${borderClass("jobTitle")} text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
             placeholder="Ex: Product Manager @ MerciYanis | B2B SaaS"
           />
