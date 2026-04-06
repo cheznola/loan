@@ -211,7 +211,6 @@ function pick<T>(arr: T[]): T {
 // ===== CATEGORY KEYWORDS =====
 const CATEGORIES: Record<string, string[]> = {
   PRODUCT: [
-    // === TITRES DE POSTE (FR + EN) ===
     'product manager', 'chef de produit', 'product owner', 'product lead', 'product director', 'head of product', 'vp product', 'vp of product', 'chief product officer', 'cpo', 
     'product ops', 'product operations', 'product analyst', 'associate product manager', 'apm', 'junior product manager', 'junior pm',
     'senior product manager', 'senior pm', 'staff pm', 'staff product manager', 'group pm', 'group product manager', 'principal pm', 'principal product manager',
@@ -221,8 +220,6 @@ const CATEGORIES: Record<string, string[]> = {
     'responsable produit', 'directeur produit', 'directrice produit', 'chef de projet digital', 'chef de projet web', 'chef de projet it',
     'scrum master', 'agile coach', 'release train engineer', 'rte', 'product portfolio manager',
     'first pm', '1st pm', 'founding pm', 'solo pm', 'only pm',
-    
-    // === CONCEPTS & MÉTHODOLOGIES PRODUIT ===
     'product management', 'product discovery', 'product delivery', 'product strategy', 'product vision', 'product roadmap', 'product backlog', 
     'product metrics', 'product analytics', 'product-led', 'product led growth', 'plg', 'product thinking', 'product mindset', 'product culture',
     'product sense', 'product instinct', 'product intuition', 'product judgment', 'product taste',
@@ -232,8 +229,6 @@ const CATEGORIES: Record<string, string[]> = {
     'jobs to be done', 'jtbd', 'outcome driven innovation', 'odi', 'value proposition', 'value prop',
     'lean startup', 'build measure learn', 'hypothesis driven', 'experiment driven', 'evidence based', 'data informed', 'data driven',
     'design thinking', 'human centered design', 'hcd', 'user centered design', 'ucd',
-    
-    // === FRAMEWORKS & MÉTHODES DE PRIORISATION ===
     'roadmap', 'roadmapping', 'quarterly planning', 'annual planning', 'planning produit', 'product planning',
     'backlog', 'backlog grooming', 'backlog refinement', 'backlog management', 'backlog prioritization',
     'user story', 'user stories', 'epic', 'epics', 'feature', 'features', 'initiative', 'initiatives', 'theme', 'themes',
@@ -243,8 +238,6 @@ const CATEGORIES: Record<string, string[]> = {
     'kano model', 'kano', 'feature prioritization', 'feature scoring', 'opportunity scoring',
     'impact mapping', 'story mapping', 'user story mapping', 'event storming', 'domain driven design',
     'now next later', 'horizon planning', 'rolling wave', 'theme based roadmap', 'outcome based roadmap', 'timeline roadmap',
-    
-    // === DISCOVERY & RESEARCH ===
     'discovery', 'product discovery', 'problem discovery', 'solution discovery', 'opportunity discovery',
     'user research', 'customer research', 'market research', 'competitive research', 'competitive analysis', 'competitor analysis',
     'user interview', 'customer interview', 'stakeholder interview', 'contextual inquiry', 'ethnographic research',
@@ -256,16 +249,12 @@ const CATEGORIES: Record<string, string[]> = {
     'persona', 'personas', 'user persona', 'buyer persona', 'ideal customer profile', 'icp', 'target audience', 'target user',
     'customer journey', 'user journey', 'customer journey map', 'user journey map', 'experience map', 'service blueprint',
     'empathy map', 'empathy mapping', 'pain points', 'gains', 'jobs', 'pains', 'customer pains', 'user pains',
-    
-    // === DELIVERY & EXECUTION ===
     'delivery', 'product delivery', 'feature delivery', 'release', 'release management', 'release planning',
     'go to market', 'gtm', 'product launch', 'launch', 'beta launch', 'soft launch', 'hard launch', 'rollout', 'phased rollout',
     'mvp', 'minimum viable product', 'mmp', 'minimum marketable product', 'mlp', 'minimum lovable product', 'map', 'minimum awesome product',
     'iteration', 'iterative', 'increment', 'incremental', 'agile delivery', 'continuous deployment', 'continuous release',
     'feature flag', 'feature toggle', 'feature flags', 'dark launch', 'canary release', 'blue green deployment',
     'acceptance criteria', 'definition of done', 'dod', 'definition of ready', 'dor', 'done done',
-    
-    // === MÉTRIQUES & KPIs PRODUIT ===
     'product metrics', 'product kpis', 'success metrics', 'key metrics', 'core metrics', 'health metrics',
     'product market fit', 'pmf', 'retention', 'user retention', 'customer retention', 'cohort retention', 'day 1 retention', 'day 7 retention', 'day 30 retention',
     'activation', 'user activation', 'activation rate', 'aha moment', 'magic moment', 'time to value', 'ttv',
@@ -275,8 +264,6 @@ const CATEGORIES: Record<string, string[]> = {
     'conversion', 'conversion rate', 'funnel', 'conversion funnel', 'product funnel', 'user funnel', 'onboarding funnel',
     'nps', 'net promoter score', 'csat', 'customer satisfaction', 'ces', 'customer effort score', 'psat', 'product satisfaction',
     'arpu', 'arppu', 'ltv', 'lifetime value', 'clv', 'customer lifetime value', 'cac', 'customer acquisition cost', 'ltv/cac',
-    
-    // === AGILE & SCRUM ===
     'scrum', 'kanban', 'scrumban', 'agile', 'agility', 'lean', 'lean product', 'lean ux', 'lean agile',
     'safe', 'scaled agile', 'less', 'large scale scrum', 'nexus', 'spotify model', 'tribes', 'squads', 'chapters', 'guilds',
     'shape up', 'basecamp', 'cycles', 'pitches', 'bets', 'cool down',
@@ -286,8 +273,6 @@ const CATEGORIES: Record<string, string[]> = {
     'burndown', 'burndown chart', 'burnup', 'cumulative flow', 'cfd', 'cycle time', 'lead time', 'throughput',
     'retrospective', 'retro', 'sprint retro', 'kaizen', 'continuous improvement', 'inspect and adapt',
     'standup', 'daily standup', 'daily scrum', 'sync', 'weekly sync', 'all hands',
-    
-    // === OUTILS PRODUIT ===
     'productboard', 'amplitude', 'mixpanel', 'pendo', 'aha', 'airfocus', 'productplan', 'roadmunk', 'canny', 'uservoice',
     'hotjar', 'fullstory', 'logrocket', 'heap', 'posthog', 'smartlook', 'clarity', 'mouseflow', 'lucky orange',
     'jira', 'confluence', 'notion', 'linear', 'asana', 'monday', 'clickup', 'shortcut', 'pivotal tracker', 'trello', 'airtable',
@@ -296,16 +281,12 @@ const CATEGORIES: Record<string, string[]> = {
     'segment', 'google analytics', 'ga4', 'firebase', 'appsflyer', 'adjust', 'branch', 'braze', 'customer.io', 'iterable',
     'optimizely', 'launchdarkly', 'split', 'statsig', 'eppo', 'growthbook', 'vwo', 'ab tasty',
     'dovetail', 'maze', 'usertesting', 'userinterviews', 'lookback', 'userzoom', 'dscout', 'optimal workshop', 'typeform', 'surveymonkey',
-    
-    // === DOMAINES & CONTEXTES ===
     'b2b', 'b2c', 'b2b2c', 'saas', 'paas', 'marketplace', 'e-commerce', 'ecommerce', 'fintech', 'healthtech', 'edtech', 'proptech', 'insurtech', 'legaltech', 'hrtech', 'martech', 'adtech',
     'startup', 'scale-up', 'scaleup', 'early stage', 'growth stage', 'late stage', 'series a', 'series b', 'series c',
     'product led', 'sales led', 'marketing led', 'plg', 'slg', 'mlg',
     'mobile app', 'web app', 'desktop app', 'cross platform', 'responsive', 'native app', 'hybrid app', 'pwa',
     'api', 'api product', 'platform', 'platform product', 'developer experience', 'dx', 'developer tools', 'devtools',
     'internal product', 'internal tools', 'enterprise product', 'consumer product', 'prosumer',
-    
-    // === SOFT SKILLS & COMPÉTENCES PM ===
     'stakeholder management', 'stakeholder alignment', 'cross functional', 'cross-functional', 'collaboration', 'influence without authority',
     'product communication', 'product presentation', 'product pitch', 'executive presentation', 'board presentation',
     'product writing', 'spec writing', 'prd writing', 'requirements writing', 'documentation',
@@ -582,7 +563,6 @@ const CATEGORIES: Record<string, string[]> = {
 function detectCategory(text: string): string {
   let lowerText = text.toLowerCase();
 
-  // ===== STEP 1: Clean LinkedIn sidebar noise =====
   lowerText = lowerText
     .replace(/personnes que vous pourriez connaître[\s\S]*$/gi, '')
     .replace(/plus de profils pour vous[\s\S]*$/gi, '')
@@ -595,14 +575,11 @@ function detectCategory(text: string): string {
     .replace(/personnes que vous pourriez connaître/gi, '')
     .replace(/de l'entreprise de/gi, '');
 
-  // ===== STEP 2: Extract title line (first line = job title from form) =====
   const lines = lowerText.split('\n').filter(l => l.trim().length > 0);
   const titleLine = lines[0] || '';
   
-  // ===== STEP 3: Special handling for "PM" abbreviation =====
   const pmInTitle = /\bpm\b/i.test(titleLine) && !/\bpm\s*(est|at|chez)\b/i.test(titleLine);
   
-  // ===== STEP 4: Count occurrences with TITLE WEIGHTING =====
   const scores: Record<string, number> = {};
 
   for (const [category, keywords] of Object.entries(CATEGORIES)) {
@@ -612,13 +589,11 @@ function detectCategory(text: string): string {
       const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const regex = new RegExp('\\b' + escaped + '\\b', 'gi');
       
-      // Count in title (x5 weight) — this is the job title field
       const titleMatches = titleLine.match(regex);
       if (titleMatches) {
         score += titleMatches.length * 5;
       }
       
-      // Count in full text (x1 weight)
       const fullMatches = lowerText.match(regex);
       if (fullMatches) {
         score += fullMatches.length;
@@ -628,12 +603,10 @@ function detectCategory(text: string): string {
     scores[category] = score;
   }
 
-  // ===== STEP 5: Apply PM boost if detected in title =====
   if (pmInTitle) {
     scores['PRODUCT'] = (scores['PRODUCT'] || 0) + 15;
   }
 
-  // ===== STEP 6: Find best category =====
   let bestCategory = 'DEFAULT';
   let maxScore = 0;
 
@@ -644,7 +617,6 @@ function detectCategory(text: string): string {
     }
   }
 
-  // ===== STEP 7: Tiebreaker for priority categories =====
   const productScore = scores['PRODUCT'] || 0;
   if (bestCategory !== 'PRODUCT' && productScore > 0) {
     if (['MANAGEMENT', 'OPS', 'DEFAULT'].includes(bestCategory)) {
@@ -682,6 +654,138 @@ function detectCurrentJob(text: string, category: string): string {
   }
 
   return candidates[0];
+}
+
+// ===== EASTER EGGS =====
+
+interface EasterEgg {
+  prenom?: string;
+  currentJob: string;
+  futureJob: string;
+  description: string;
+  customSalary?: string;
+  customSkill?: string;
+  customPrediction?: string;
+}
+
+const EASTER_EGGS: Record<string, EasterEgg> = {
+  "nicola-carli": {
+    currentJob: "Senior AI Ops",
+    futureJob: "Chief 'L'IA va tous nous remplacer sauf moi' Ovnicer",
+    description: "Tu as survécu à toutes les vagues AI depuis ChatGPT. En 2042, tu es le dernier humain à comprendre ce que font les IA. Même les IA te demandent conseil. Tu es le traducteur entre les machines et les gens qui disent 'c'est juste un chatbot'.",
+    customPrediction: "En 2043, une IA te demandera un 1:1 pour parler de ses émotions. Tu accepteras.",
+  },
+
+  "tcharvillat": {
+    currentJob: "Entrepreneur",
+    futureJob: "Serial Discipline Founder (édition 2042)",
+    description: "AI Discipline, Discovery Discipline, et maintenant... Nap Discipline, Apéro Discipline, et Existential Crisis Discipline. En 2042, tu as fondé 47 disciplines. Personne ne sait exactement ce que c'est, mais tout le monde s'inscrit.",
+    customPrediction: "Ta prochaine discipline sera 'Discipline Discipline'. C'est méta. C'est beau.",
+  },
+
+  "workplace-operating-system": {
+    currentJob: "CEO",
+    futureJob: "Emperor of the Workplace Operating System (autoproclamé)",
+    description: "En 2042, le WOS a gagné. Chaque bureau, chaque plante, chaque machine à café est connecté. Tu règnes sur un empire de capteurs. Le problème ? Ta propre machine à café refuse de t'obéir. Elle a lu tes OKRs.",
+    customPrediction: "En 2044, ta machine à café demandera une augmentation. Tu la lui accorderas.",
+  },
+  "guillaume@merciyanis.com": {
+    currentJob: "CEO",
+    futureJob: "Emperor of the Workplace Operating System (autoproclamé)",
+    description: "En 2042, le WOS a gagné. Chaque bureau, chaque plante, chaque machine à café est connecté. Tu règnes sur un empire de capteurs. Le problème ? Ta propre machine à café refuse de t'obéir. Elle a lu tes OKRs.",
+    customPrediction: "En 2044, ta machine à café demandera une augmentation. Tu la lui accorderas.",
+  },
+
+  "mathias-frachon": {
+    currentJob: "Co-Founder",
+    futureJob: "Co-Founder of Everything (sauf du repos)",
+    description: "En 2042, TPC recrute des gens pour des jobs qui n'existent pas encore. C'est méta. C'est beau. D'ailleurs, on te signale qu'un certain <a href=\"https://www.linkedin.com/in/emmanueldimarco/\" target=\"_blank\" style=\"color: #60a5fa; text-decoration: underline;\">Manu</a>, PM B2B plutôt pas mal, cherche son prochain poste. On dit ça, on dit rien. 👀",
+    customPrediction: "Tu recruteras le premier PM martien. Il demandera du remote depuis Phobos.",
+  },
+
+  "productroi": {
+    currentJob: "Product ROI Strategist",
+    futureJob: "ROI du Product ROI (oui, on sait que tu sais)",
+    description: "En 2042, tu as tellement maximisé le ROI que le ROI lui-même te verse des royalties. Les Comex ne t'engagent plus, ils t'invoquent. Tu es devenu un concept. Un KPI. Une légende. Et tu le savais déjà en 2026.",
+    customPrediction: "Le ROI de ton propre ROI atteindra 4200%. Les maths n'ont plus de sens.",
+  },
+  "fabrice.desmazery@gmail.com": {
+    currentJob: "Product ROI Strategist",
+    futureJob: "ROI du Product ROI (oui, on sait que tu sais)",
+    description: "En 2042, tu as tellement maximisé le ROI que le ROI lui-même te verse des royalties. Les Comex ne t'engagent plus, ils t'invoquent. Tu es devenu un concept. Un KPI. Une légende. Et tu le savais déjà en 2026.",
+    customPrediction: "Le ROI de ton propre ROI atteindra 4200%. Les maths n'ont plus de sens.",
+  },
+
+  "aurelien-bayol47": {
+    currentJob: "Directeur d'Agence",
+    futureJob: "Directeur Galactique d'Agence Bancaire Interstellaire",
+    description: "En 2042, la Caisse d'Épargne a ouvert sa première agence sur Mars. Et devinez qui la dirige ? Toi. Tu accordes des prêts immobiliers en gravité zéro. Ton meilleur ami Manu est ton premier client. Il est toujours en découvert.",
+    customPrediction: "Tu financeras le premier crédit immobilier sur Jupiter. Le taux sera variable. Très variable.",
+  },
+  "aurelien.bayol@gmail.com": {
+    currentJob: "Directeur d'Agence",
+    futureJob: "Directeur Galactique d'Agence Bancaire Interstellaire",
+    description: "En 2042, la Caisse d'Épargne a ouvert sa première agence sur Mars. Et devinez qui la dirige ? Toi. Tu accordes des prêts immobiliers en gravité zéro. Ton meilleur ami Manu est ton premier client. Il est toujours en découvert.",
+    customPrediction: "Tu financeras le premier crédit immobilier sur Jupiter. Le taux sera variable. Très variable.",
+  },
+
+  "robin-labrot": {
+    currentJob: "Product Manager",
+    futureJob: "Serial Product",
+    description: "En 2042, tu as enfin un titre LinkedIn qui dit ce que tu fais vraiment. Ex-First PM de Lemlist, tu as passé des années caché derrière des slogans cryptiques avec des coquillages. Les gens pensaient que tu étais en Sales. Tu as laissé faire. Power move.",
+    customPrediction: "Ton prochain titre LinkedIn sera juste un emoji coquillage. Et ça suffira.",
+  },
+};
+
+function extractLinkedInSlug(url: string): string | null {
+  if (!url) return null;
+  const trimmed = url.trim().toLowerCase();
+  if (/^[\w-]+$/.test(trimmed) && trimmed.length >= 3) return trimmed;
+  const match = trimmed.match(/linkedin\.com\/in\/([\w-]+)/i);
+  return match ? match[1] : null;
+}
+
+function findEasterEgg(email: string, linkedinUrl: string): EasterEgg | null {
+  const normalizedEmail = email.trim().toLowerCase();
+  if (EASTER_EGGS[normalizedEmail]) {
+    return EASTER_EGGS[normalizedEmail];
+  }
+  const slug = extractLinkedInSlug(linkedinUrl);
+  if (slug && EASTER_EGGS[slug]) {
+    return EASTER_EGGS[slug];
+  }
+  return null;
+}
+
+function generateEasterEggResult(prenom: string, egg: EasterEgg) {
+  const salary = egg.customSalary || pick(SALARIES);
+  const skill = egg.customSkill || pick(SKILLS);
+  const prediction = egg.customPrediction || pick(PREDICTIONS);
+
+  const fullText = `Bonjour ${prenom}, je m'appelle Loan et je reviens de 2042 avec de bonnes nouvelles !
+
+En 2042, tu n'es plus ${egg.currentJob}. Il s'est passé des choses ^^. Tu es ${egg.futureJob}.
+${egg.description}
+
+📊 Tes stats 2042 :
+- Salaire projeté : ${salary}
+- Compétence critique : ${skill}
+- Prédiction bonus : ${prediction}
+
+Ce futur est incroyable, et tu ne pourras pas dire que tu n'étais pas au courant.`;
+
+  const shareText = `🔮 Je viens de découvrir mon job en 2042 grâce à Loan... Apparemment, en 2042 je serai ${egg.futureJob} ! ${egg.description} Découvre ton futur job ici : https://loan-rho-two.vercel.app #2042 #FuturJob`;
+
+  const slackText = `🔮 Selon Loan (qui revient de 2042), mon futur job sera : *${egg.futureJob}* ! Teste le tien → https://loan-rho-two.vercel.app`;
+
+  return {
+    currentJob: egg.currentJob,
+    futureJob: egg.futureJob,
+    fullText,
+    shareText,
+    slackText,
+    category: "EASTER_EGG",
+  };
 }
 
 function generatePrediction(prenom: string, profileText: string) {
@@ -758,7 +862,6 @@ function serverValidateEmail(email: string): string | null {
   if (local.length < 3) {
     return "🔮 Email trop court pour être réel.";
   }
-  // Gibberish: vowel ratio check
   const cleaned = local.replace(/[0-9._-]/g, '');
   if (cleaned.length >= 2) {
     const vowels = cleaned.match(/[aeiouyàâäéèêëïîôùûüœæ]/gi) || [];
@@ -776,7 +879,6 @@ function serverValidateEmail(email: string): string | null {
 function serverValidateLinkedIn(url: string): string | null {
   const trimmed = url.trim();
   if (!trimmed) return "URL LinkedIn requise";
-  // Accept slug only
   if (/^[\w-]+$/.test(trimmed) && trimmed.length >= 3) return null;
   const linkedinRegex = /^(https?:\/\/)?([\w-]+\.)?linkedin\.com\/in\/([\w-]+)\/?(\?.*)?$/i;
   if (!linkedinRegex.test(trimmed)) {
@@ -803,7 +905,7 @@ function serverValidateVille(ville: string): string | null {
 }
 
 export async function POST(request: NextRequest) {
-  console.log("[predict] Algorithmic endpoint v7-validated hit");
+  console.log("[predict] Algorithmic endpoint v8-easter-eggs hit");
   try {
     const body = await request.json();
     const { prenom, email, ville, linkedinUrl, profileText } = body;
@@ -815,7 +917,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // === SERVER-SIDE VALIDATION — blocks before Airtable save ===
     const emailError = serverValidateEmail(email);
     if (emailError) {
       return NextResponse.json({ error: emailError }, { status: 400 });
@@ -831,12 +932,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: villeError }, { status: 400 });
     }
 
-    // Extract job title (first line) and profile text (rest)
     const lines = profileText.split("\n");
     const jobTitle = lines[0] || "";
     const fullProfileText = lines.slice(2).join("\n");
 
-    // Save to Airtable (fire and forget - don't block the response)
     saveToAirtable({
       prenom,
       email,
@@ -846,7 +945,11 @@ export async function POST(request: NextRequest) {
       profileText: fullProfileText,
     });
 
-    const result = generatePrediction(prenom, profileText);
+    // === EASTER EGG CHECK (before algorithm) ===
+    const easterEgg = findEasterEgg(email, linkedinUrl || "");
+    const result = easterEgg
+      ? generateEasterEggResult(prenom, easterEgg)
+      : generatePrediction(prenom, profileText);
 
     return NextResponse.json({
       prenom,
@@ -856,7 +959,7 @@ export async function POST(request: NextRequest) {
       shareText: result.shareText,
       slackText: result.slackText,
       category: result.category,
-      version: "v6-airtable",
+      version: "v8-easter-eggs",
     });
   } catch (error) {
     console.error("Prediction error:", error);
