@@ -23,28 +23,28 @@ const SHORT_ERRORS: Record<string, Record<string, string>> = {
   },
   email: {
     invalid_format: "🔮 Format d'email invalide.",
-    blacklisted: "🔮 Pas de fausse adresse, Loan te voit !",
+    blacklisted: "Pas de fausse adresse, Loan te voit !",
     disposable: "🔮 Les emails jetables n'existent plus en 2042.",
-    too_short: "🔮 Email trop court pour être réel.",
+    too_short: "Email trop court pour être réel.",
     gibberish: "🔮 Ton futur en mérite un vrai.",
   },
   ville: {
     required: "🔮 Dans quelle ville bosses-tu ?",
     too_short: "🔮 Nom de ville trop court.",
     too_long: "🔮 Nom de ville trop long.",
-    zip_code: "🔮 Le nom de la ville, pas le code postal !",
+    zip_code: "Le nom de la ville, pas le code postal !",
     invalid: "🔮 Ça ne ressemble pas à une ville.",
     gibberish: "🔮 Ça ne ressemble pas à une ville.",
   },
   linkedinUrl: {
     required: "🔮 Loan a besoin de ton profil LinkedIn.",
-    company_page: "🔮 Ton profil perso, pas une page entreprise !",
-    invalid: "🔮 Ça ne ressemble pas à un profil LinkedIn.",
+    company_page: "Ton profil perso, pas une page entreprise !",
+    invalid: "Ça ne ressemble pas à un profil LinkedIn.",
     gibberish: "🔮 Ce profil LinkedIn n'a pas l'air réel.",
   },
   jobTitle: {
     required: "🔮 Sans titre, Loan ne peut pas prédire.",
-    gibberish: "🔮 Ça ne ressemble pas à un titre de poste.",
+    gibberish: "Ça ne ressemble pas à un titre de poste.",
   },
 };
 
