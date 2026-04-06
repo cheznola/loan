@@ -235,7 +235,7 @@ export default function Home() {
             placeholder="Ex: Product Manager @ MerciYanis | B2B SaaS"
           />
           <p className="text-xs text-zinc-600 mt-1">
-            Copie-la telle quelle !
+            Copie-le telle quelle !
           </p>
         </div>
 
