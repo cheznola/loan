@@ -922,14 +922,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: emailError }, { status: 400 });
     }
 
-    const linkedinError = serverValidateLinkedIn(linkedinUrl || "");
-    if (linkedinError) {
-      return NextResponse.json({ error: linkedinError }, { status: 400 });
+    // LinkedIn and ville are optional on mobile (empty string = skip validation)
+    if (linkedinUrl && linkedinUrl.trim()) {
+      const linkedinError = serverValidateLinkedIn(linkedinUrl);
+      if (linkedinError) {
+        return NextResponse.json({ error: linkedinError }, { status: 400 });
+      }
     }
 
-    const villeError = serverValidateVille(ville || "");
-    if (villeError) {
-      return NextResponse.json({ error: villeError }, { status: 400 });
+    if (ville && ville.trim()) {
+      const villeError = serverValidateVille(ville);
+      if (villeError) {
+        return NextResponse.json({ error: villeError }, { status: 400 });
+      }
     }
 
     const lines = profileText.split("\n");
