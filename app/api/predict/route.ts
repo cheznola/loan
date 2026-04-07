@@ -211,7 +211,7 @@ function pick<T>(arr: T[]): T {
 // ===== CATEGORY KEYWORDS =====
 const CATEGORIES: Record<string, string[]> = {
   PRODUCT: [
-    'product manager', 'chef de produit', 'product owner', 'product lead', 'product director', 'head of product', 'vp product', 'vp of product', 'chief product officer', 'cpo', 
+    'product manager', 'chef de produit', 'product owner', 'product lead', 'product director', 'head of product', 'HoP', 'vp product', 'vp of product', 'chief product officer', 'cpo', 
     'product ops', 'product operations', 'product analyst', 'associate product manager', 'apm', 'junior product manager', 'junior pm',
     'senior product manager', 'senior pm', 'staff pm', 'staff product manager', 'group pm', 'group product manager', 'principal pm', 'principal product manager',
     'product builder', 'ai product manager', 'platform product manager', 'growth pm', 'growth product manager', 'technical product manager', 'tpm',
