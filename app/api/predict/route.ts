@@ -219,7 +219,7 @@ const CATEGORIES: Record<string, string[]> = {
     'product coach', 'product consultant', 'product trainer', 'product mentor', 'product evangelist',
     'responsable produit', 'directeur produit', 'directrice produit', 'chef de projet digital', 'chef de projet web', 'chef de projet it',
     'scrum master', 'agile coach', 'release train engineer', 'rte', 'product portfolio manager',
-    'first pm', '1st pm', 'founding pm', 'solo pm', 'only pm',
+    'first pm', 'first product manager', '1st pm', 'founding pm', 'solo pm', 'only pm',
     'product management', 'product discovery', 'product delivery', 'product strategy', 'product vision', 'product roadmap', 'product backlog', 
     'product metrics', 'product analytics', 'product-led', 'product led growth', 'plg', 'product thinking', 'product mindset', 'product culture',
     'product sense', 'product instinct', 'product intuition', 'product judgment', 'product taste',
