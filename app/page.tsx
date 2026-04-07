@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import TransmissionFeed from "./components/TransmissionFeed";
 import MobileForm from "./components/MobileForm";
@@ -18,11 +18,8 @@ const LOADING_MESSAGES = [
   "Résultat imminent...",
 ];
 
-// Short error messages displayed below each field
 const SHORT_ERRORS: Record<string, Record<string, string>> = {
-  prenom: {
-    required: "🔮 Loan a besoin de ton prénom.",
-  },
+  prenom: { required: "🔮 Loan a besoin de ton prénom." },
   email: {
     invalid_format: "🔮 Format d'email invalide.",
     blacklisted: "Pas de fausse adresse, Loan te voit !",
@@ -53,24 +50,17 @@ const SHORT_ERRORS: Record<string, Record<string, string>> = {
 export default function Home() {
   const router = useRouter();
   const isMobile = useIsMobile();
+  const [mobileLoading, setMobileLoading] = useState(false);
   const [formData, setFormData] = useState({
-    prenom: "",
-    email: "",
-    ville: "",
-    linkedinUrl: "",
-    jobTitle: "",
-    profileText: "",
+    prenom: "", email: "", ville: "", linkedinUrl: "", jobTitle: "", profileText: "",
   });
   const [loading, setLoading] = useState(false);
   const [loadingMsg, setLoadingMsg] = useState(LOADING_MESSAGES[0]);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState("");
   const [showOptional, setShowOptional] = useState(false);
-
-  // Field-level errors
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Gibberish check helper
   const isGibberish = (text: string): boolean => {
     const cleaned = text.trim().replace(/[\s\-'.]/g, '');
     if (cleaned.length < 4) return false;
@@ -106,7 +96,6 @@ export default function Home() {
       if (lower.includes("fausse") || lower.includes("blacklist")) return SHORT_ERRORS.email.blacklisted;
       if (lower.includes("jetable")) return SHORT_ERRORS.email.disposable;
       if (lower.includes("court")) return SHORT_ERRORS.email.too_short;
-      if (lower.includes("ressemble")) return SHORT_ERRORS.email.gibberish;
       return SHORT_ERRORS.email.gibberish;
     }
     if (field === "ville") {
@@ -129,30 +118,23 @@ export default function Home() {
   const validateField = (field: string, value: string) => {
     let result: { valid: boolean; error?: string; cleaned?: string } = { valid: true };
     switch (field) {
-      case "email":
-        result = validateEmail(value);
-        break;
+      case "email": result = validateEmail(value); break;
       case "linkedinUrl":
         result = validateLinkedInUrl(value);
         if (result.valid && value.trim()) {
           const slugMatch = value.trim().toLowerCase().match(/linkedin\.com\/in\/([\w-]+)/i);
           const rawSlug = slugMatch ? slugMatch[1] : (/^[\w-]+$/.test(value.trim()) ? value.trim().toLowerCase() : null);
-          if (rawSlug && isGibberish(rawSlug.replace(/-/g, ''))) {
-            result = { valid: false, error: "gibberish" };
-          }
+          if (rawSlug && isGibberish(rawSlug.replace(/-/g, ''))) result = { valid: false, error: "gibberish" };
         }
         break;
       case "ville":
         result = validateVille(value);
-        if (result.valid && value.trim().length >= 3 && isGibberish(value.trim())) {
-          result = { valid: false, error: "gibberish" };
-        }
+        if (result.valid && value.trim().length >= 3 && isGibberish(value.trim())) result = { valid: false, error: "gibberish" };
         break;
     }
     setFieldErrors((prev) => {
       const next = { ...prev };
-      if (result.valid) { delete next[field]; }
-      else { next[field] = toShortError(field, result.error || ""); }
+      if (result.valid) delete next[field]; else next[field] = toShortError(field, result.error || "");
       return next;
     });
     return result;
@@ -168,9 +150,7 @@ export default function Home() {
     } else if (formData.linkedinUrl.trim()) {
       const slugMatch = formData.linkedinUrl.trim().toLowerCase().match(/linkedin\.com\/in\/([\w-]+)/i);
       const rawSlug = slugMatch ? slugMatch[1] : (/^[\w-]+$/.test(formData.linkedinUrl.trim()) ? formData.linkedinUrl.trim().toLowerCase() : null);
-      if (rawSlug && isGibberish(rawSlug.replace(/-/g, ''))) {
-        errors.linkedinUrl = SHORT_ERRORS.linkedinUrl.gibberish;
-      }
+      if (rawSlug && isGibberish(rawSlug.replace(/-/g, ''))) errors.linkedinUrl = SHORT_ERRORS.linkedinUrl.gibberish;
     }
     const villeResult = validateVille(formData.ville);
     if (!villeResult.valid) {
@@ -179,24 +159,15 @@ export default function Home() {
       errors.ville = SHORT_ERRORS.ville.gibberish;
     }
     if (!formData.prenom.trim()) errors.prenom = SHORT_ERRORS.prenom.required;
-    if (!formData.jobTitle.trim()) {
-      errors.jobTitle = SHORT_ERRORS.jobTitle.required;
-    } else if (isGibberish(formData.jobTitle.trim())) {
-      errors.jobTitle = SHORT_ERRORS.jobTitle.gibberish;
-    }
+    if (!formData.jobTitle.trim()) errors.jobTitle = SHORT_ERRORS.jobTitle.required;
+    else if (isGibberish(formData.jobTitle.trim())) errors.jobTitle = SHORT_ERRORS.jobTitle.gibberish;
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (fieldErrors[field]) {
-      setFieldErrors((prev) => {
-        const next = { ...prev };
-        delete next[field];
-        return next;
-      });
-    }
+    if (fieldErrors[field]) setFieldErrors((prev) => { const next = { ...prev }; delete next[field]; return next; });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -204,52 +175,31 @@ export default function Home() {
     if (!validateAll()) { setError(""); return; }
     const linkedinResult = validateLinkedInUrl(formData.linkedinUrl);
     const cleanedLinkedinUrl = linkedinResult.cleaned || formData.linkedinUrl;
-    setLoading(true);
-    setError("");
-    setLoadingProgress(0);
-    let msgIndex = 0;
-    const totalDuration = 5000;
-    const intervalTime = 500;
-    let elapsed = 0;
+    setLoading(true); setError(""); setLoadingProgress(0);
+    let msgIndex = 0; const totalDuration = 5000; const intervalTime = 500; let elapsed = 0;
     const interval = setInterval(() => {
       elapsed += intervalTime;
       setLoadingProgress(Math.min((elapsed / totalDuration) * 100, 95));
-      if (elapsed % 1000 === 0) {
-        msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
-        setLoadingMsg(LOADING_MESSAGES[msgIndex]);
-      }
+      if (elapsed % 1000 === 0) { msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length; setLoadingMsg(LOADING_MESSAGES[msgIndex]); }
     }, intervalTime);
     const theatrePromise = new Promise((resolve) => setTimeout(resolve, totalDuration));
     try {
       const combinedProfile = formData.jobTitle + "\n\n" + (formData.profileText || "");
       const [res] = await Promise.all([
         fetch("/api/predict", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prenom: formData.prenom,
-            email: formData.email,
-            ville: formData.ville,
-            linkedinUrl: cleanedLinkedinUrl,
-            profileText: combinedProfile,
-          }),
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prenom: formData.prenom, email: formData.email, ville: formData.ville, linkedinUrl: cleanedLinkedinUrl, profileText: combinedProfile }),
         }),
         theatrePromise,
       ]);
       setLoadingProgress(100);
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Erreur serveur");
-      }
+      if (!res.ok) { const data = await res.json(); throw new Error(data.error || "Erreur serveur"); }
       const result = await res.json();
       sessionStorage.setItem("prediction", JSON.stringify(result));
       router.push("/resultat");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue. Réessaie !");
-    } finally {
-      clearInterval(interval);
-      setLoading(false);
-    }
+    } finally { clearInterval(interval); setLoading(false); }
   };
 
   const FieldError = ({ field }: { field: string }) => {
@@ -258,15 +208,17 @@ export default function Home() {
     return <p className="text-sm text-amber-400 mt-1.5" style={{ animation: "fadeIn 0.2s ease-out" }}>{msg}</p>;
   };
 
-  const borderClass = (field: string) =>
-    fieldErrors[field] ? "border-amber-400/60" : "border-[var(--card-border)]";
+  const borderClass = (field: string) => fieldErrors[field] ? "border-amber-400/60" : "border-[var(--card-border)]";
 
   const handleMobileResult = (result: Record<string, unknown>) => {
     sessionStorage.setItem("prediction", JSON.stringify(result));
     router.push("/resultat");
   };
 
-  // While detecting device, show loading crystal ball (avoids flash)
+  const handleMobileLoading = useCallback((isLoading: boolean) => {
+    setMobileLoading(isLoading);
+  }, []);
+
   if (isMobile === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -275,7 +227,8 @@ export default function Home() {
     );
   }
 
-  if (loading) {
+  // Desktop loading screen
+  if (!isMobile && loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-6">
         <div className="text-center max-w-md">
@@ -295,6 +248,12 @@ export default function Home() {
     );
   }
 
+  // Mobile loading: MobileForm renders its own full-screen loader,
+  // so we hide Hero + TransmissionFeed and just render MobileForm
+  if (isMobile && mobileLoading) {
+    return <MobileForm onResult={handleMobileResult} onLoadingChange={handleMobileLoading} />;
+  }
+
   return (
     <div className="flex flex-col items-center min-h-screen px-4 py-12">
       {/* Hero */}
@@ -306,9 +265,7 @@ export default function Home() {
         <p className="text-lg text-zinc-400 leading-relaxed">
           Loan revient de 2042 et a vu ton futur job.
           <br />
-          <span className="text-zinc-500">
-            30 secondes pour découvrir ce qui t&apos;attend.
-          </span>
+          <span className="text-zinc-500">30 secondes pour découvrir ce qui t&apos;attend.</span>
         </p>
       </div>
 
@@ -316,12 +273,11 @@ export default function Home() {
       <TransmissionFeed />
 
       {/* === MOBILE FORM === */}
-      {isMobile && <MobileForm onResult={handleMobileResult} />}
+      {isMobile && <MobileForm onResult={handleMobileResult} onLoadingChange={handleMobileLoading} />}
 
       {/* === DESKTOP FORM (unchanged) === */}
       {!isMobile && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-5 mt-10">
-          {/* Row 1: Prénom + Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-zinc-400 mb-1.5">Prénom *</label>
@@ -341,7 +297,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Ville */}
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">Ville *</label>
             <input type="text" required value={formData.ville} onChange={(e) => handleChange("ville", e.target.value)}
@@ -351,7 +306,6 @@ export default function Home() {
             <FieldError field="ville" />
           </div>
 
-          {/* LinkedIn URL */}
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">Ton profil LinkedIn *</label>
             <input type="text" required value={formData.linkedinUrl} onChange={(e) => handleChange("linkedinUrl", e.target.value)}
@@ -367,7 +321,6 @@ export default function Home() {
             {!fieldErrors.linkedinUrl && <p className="text-xs text-zinc-600 mt-1">Loan a besoin de ton profil pour voyager dans le temps.</p>}
           </div>
 
-          {/* Job Title */}
           <div>
             <label className="block text-sm font-medium text-zinc-400 mb-1.5">Ton titre de poste LinkedIn *</label>
             <input type="text" required value={formData.jobTitle} onChange={(e) => handleChange("jobTitle", e.target.value)}
@@ -381,7 +334,6 @@ export default function Home() {
             {!fieldErrors.jobTitle && <p className="text-xs text-zinc-600 mt-1">Copie-le tel quel !</p>}
           </div>
 
-          {/* Optional: Full profile */}
           <div className="pt-2">
             <button type="button" onClick={() => setShowOptional(!showOptional)}
               className="text-sm text-[var(--accent-light)] hover:underline flex items-center gap-1">
@@ -407,9 +359,7 @@ export default function Home() {
             </div>
           )}
 
-          {error && (
-            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">{error}</div>
-          )}
+          {error && <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">{error}</div>}
 
           <button type="submit"
             className="w-full py-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-light)] text-white font-semibold text-lg transition-all hover:shadow-[0_0_30px_var(--accent-glow)] cursor-pointer">
