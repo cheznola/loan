@@ -50,7 +50,6 @@ export default function ResultPage() {
     setEnrichError("");
 
     try {
-      // Retrieve stored email from sessionStorage (saved during initial submit)
       const storedData = sessionStorage.getItem("mobileFormData");
       const formData = storedData ? JSON.parse(storedData) : {};
 
