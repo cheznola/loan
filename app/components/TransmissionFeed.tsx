@@ -7,8 +7,8 @@ import Link from 'next/link';
 // CONFIGURATION
 // ============================================
 
-// Date de lancement - à ajuster quand tu lances vraiment
-const LAUNCH_DATE = new Date('2026-04-03T14:00:00+02:00');
+// Date de lancement - reset 7 avril 2026
+const LAUNCH_DATE = new Date('2026-04-07T10:00:00+02:00');
 
 // Logs pré-écrits par catégorie - DRÔLES et CIBLÉS
 const FAKE_TRANSMISSIONS: Array<{
@@ -156,8 +156,8 @@ export default function TransmissionFeed() {
       const overthinkingHours = Math.floor(hours * 4.2 + Math.random() * 3);
       
       setStats({
-        futurs: Math.max(baseFuturs, 47), // Minimum 47 pour crédibilité
-        overthinking: Math.max(overthinkingHours, 142), // En heures
+        futurs: baseFuturs, // Démarre à 0, croissance naturelle
+        overthinking: Math.max(overthinkingHours, 0), // En heures
       });
     };
 
