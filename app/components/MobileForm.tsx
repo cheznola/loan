@@ -16,17 +16,19 @@ const LOADING_MESSAGES = [
 const JOB_SUGGESTIONS = [
   "Product Manager",
   "Senior PM",
-  "HoP",
-  "Product Leader",
+  "CPO",
+  "Product Owner",
   "Developer",
   "Tech Lead",
   "CTO",
-  "Product Designer",
+  "UX Designer",
+  "UI Designer",
   "Data Analyst",
   "Data Scientist",
-  "AI Product",
-  "CPO",
+  "Growth Manager",
+  "Head of Product",
   "Engineering Manager",
+  "Scrum Master",
   "DevOps",
   "Full Stack Dev",
   "Consultant",
@@ -64,15 +66,23 @@ export default function MobileForm({ onResult, onLoadingChange }: MobileFormProp
   const visibleSuggestions = showAllSuggestions ? filteredSuggestions : filteredSuggestions.slice(0, 6);
 
   const isGibberish = (text: string): boolean => {
-    const cleaned = text.trim().replace(/[\s\-'.]/g, "");
-    if (cleaned.length < 4) return false;
-    const lower = cleaned.toLowerCase();
-    const vowels = lower.match(/[aeiouyàâäéèêëïîôùûüœæ]/gi) || [];
-    const ratio = vowels.length / lower.length;
-    if (ratio < 0.15) return true;
-    if (/[^aeiouyàâäéèêëïîôùûüœæ]{5,}/i.test(lower)) return true;
-    if (/^(.{1,3})\1{2,}$/i.test(lower)) return true;
-    if (/(.)\1{2,}/i.test(lower)) return true;
+    const cleaned = text.trim();
+    if (cleaned.length < 3) return false;
+    const words = cleaned.match(/[a-zA-ZÀ-ÿ]{3,}/g);
+    if (!words || words.length === 0) return false;
+    for (const word of words) {
+      const lower = word.toLowerCase();
+      if (/[^aeiouyàâäéèêëïîôùûüœæ]{5,}/i.test(lower)) return true;
+      if (/(.)\1{2,}/i.test(lower)) return true;
+    }
+    const alphaOnly = cleaned.replace(/[^a-zA-ZÀ-ÿ]/g, '').toLowerCase();
+    if (alphaOnly.length >= 4) {
+      if (/^(.{1,3})\1{2,}$/i.test(alphaOnly)) return true;
+      if (alphaOnly.length >= 8) {
+        const uniqueChars = new Set(alphaOnly.split('')).size;
+        if (uniqueChars <= 2) return true;
+      }
+    }
     return false;
   };
 
