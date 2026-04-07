@@ -77,11 +77,11 @@ export default function Home() {
       if (/[^aeiouyàâäéèêëïîôùûüœæ]{5,}/i.test(lower)) return true;
       if (/(.)\1{2,}/i.test(lower)) return true;
     }
-    const alphaOnly = cleaned.replace(/[^a-zA-ZÀ-ÿ]/g, '').toLowerCase();
+    const alphaOnly = cleaned.replace(/[^a-zA-ZÀ-ÿ]/g, "").toLowerCase();
     if (alphaOnly.length >= 4) {
       if (/^(.{1,3})\1{2,}$/i.test(alphaOnly)) return true;
       if (alphaOnly.length >= 8) {
-        const uniqueChars = new Set(alphaOnly.split('')).size;
+        const uniqueChars = new Set(alphaOnly.split("")).size;
         if (uniqueChars <= 2) return true;
       }
     }
@@ -124,8 +124,12 @@ export default function Home() {
         result = validateLinkedInUrl(value);
         if (result.valid && value.trim()) {
           const slugMatch = value.trim().toLowerCase().match(/linkedin\.com\/in\/([\w-]+)/i);
-          const rawSlug = slugMatch ? slugMatch[1] : (/^[\w-]+$/.test(value.trim()) ? value.trim().toLowerCase() : null);
-          if (rawSlug && isGibberish(rawSlug.replace(/-/g, ''))) {
+          const rawSlug = slugMatch
+            ? slugMatch[1]
+            : /^[\w-]+$/.test(value.trim())
+            ? value.trim().toLowerCase()
+            : null;
+          if (rawSlug && isGibberish(rawSlug.replace(/-/g, ""))) {
             result = { valid: false, error: "gibberish" };
           }
         }
@@ -151,30 +155,40 @@ export default function Home() {
 
   const validateAll = (): boolean => {
     const errors: Record<string, string> = {};
+
     const emailResult = validateEmail(formData.email);
     if (!emailResult.valid) errors.email = toShortError("email", emailResult.error || "");
+
     const linkedinResult = validateLinkedInUrl(formData.linkedinUrl);
     if (!linkedinResult.valid) {
       errors.linkedinUrl = toShortError("linkedinUrl", linkedinResult.error || "");
     } else if (formData.linkedinUrl.trim()) {
       const slugMatch = formData.linkedinUrl.trim().toLowerCase().match(/linkedin\.com\/in\/([\w-]+)/i);
-      const rawSlug = slugMatch ? slugMatch[1] : (/^[\w-]+$/.test(formData.linkedinUrl.trim()) ? formData.linkedinUrl.trim().toLowerCase() : null);
-      if (rawSlug && isGibberish(rawSlug.replace(/-/g, ''))) {
+      const rawSlug = slugMatch
+        ? slugMatch[1]
+        : /^[\w-]+$/.test(formData.linkedinUrl.trim())
+        ? formData.linkedinUrl.trim().toLowerCase()
+        : null;
+      if (rawSlug && isGibberish(rawSlug.replace(/-/g, ""))) {
         errors.linkedinUrl = SHORT_ERRORS.linkedinUrl.gibberish;
       }
     }
+
     const villeResult = validateVille(formData.ville);
     if (!villeResult.valid) {
       errors.ville = toShortError("ville", villeResult.error || "");
     } else if (formData.ville.trim().length >= 3 && isGibberish(formData.ville.trim())) {
       errors.ville = SHORT_ERRORS.ville.gibberish;
     }
+
     if (!formData.prenom.trim()) errors.prenom = SHORT_ERRORS.prenom.required;
+
     if (!formData.jobTitle.trim()) {
       errors.jobTitle = SHORT_ERRORS.jobTitle.required;
     } else if (isGibberish(formData.jobTitle.trim())) {
       errors.jobTitle = SHORT_ERRORS.jobTitle.gibberish;
     }
+
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -198,13 +212,16 @@ export default function Home() {
     }
     const linkedinResult = validateLinkedInUrl(formData.linkedinUrl);
     const cleanedLinkedinUrl = linkedinResult.cleaned || formData.linkedinUrl;
+
     setLoading(true);
     setError("");
     setLoadingProgress(0);
+
     let msgIndex = 0;
     const totalDuration = 5000;
     const intervalTime = 500;
     let elapsed = 0;
+
     const interval = setInterval(() => {
       elapsed += intervalTime;
       setLoadingProgress(Math.min((elapsed / totalDuration) * 100, 95));
@@ -213,7 +230,9 @@ export default function Home() {
         setLoadingMsg(LOADING_MESSAGES[msgIndex]);
       }
     }, intervalTime);
+
     const theatrePromise = new Promise((resolve) => setTimeout(resolve, totalDuration));
+
     try {
       const combinedProfile = formData.jobTitle + "\n\n" + (formData.profileText || "");
       const [res] = await Promise.all([
@@ -230,16 +249,21 @@ export default function Home() {
         }),
         theatrePromise,
       ]);
+
       setLoadingProgress(100);
+
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || "Erreur serveur");
       }
+
       const result = await res.json();
       sessionStorage.setItem("prediction", JSON.stringify(result));
       router.push("/resultat");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue. Réessaie !");
+      setError(
+        err instanceof Error ? err.message : "Une erreur est survenue. Réessaie !"
+      );
     } finally {
       clearInterval(interval);
       setLoading(false);
@@ -250,7 +274,10 @@ export default function Home() {
     const msg = fieldErrors[field];
     if (!msg) return null;
     return (
-      <p className="text-sm text-amber-400 mt-1.5" style={{ animation: "fadeIn 0.2s ease-out" }}>
+      <p
+        className="text-sm text-amber-400 mt-1.5"
+        style={{ animation: "fadeIn 0.2s ease-out" }}
+      >
         {msg}
       </p>
     );
@@ -259,13 +286,14 @@ export default function Home() {
   const borderClass = (field: string) =>
     fieldErrors[field] ? "border-amber-400/60" : "border-[var(--card-border)]";
 
-  // ✅ FIX: handleMobileResult reste, mais plus de mobileLoading
-  const handleMobileResult = useCallback((result: Record<string, unknown>) => {
-    sessionStorage.setItem("prediction", JSON.stringify(result));
-    router.push("/resultat");
-  }, [router]);
+  const handleMobileResult = useCallback(
+    (result: Record<string, unknown>) => {
+      sessionStorage.setItem("prediction", JSON.stringify(result));
+      router.push("/resultat");
+    },
+    [router]
+  );
 
-  // Pendant la détection du device
   if (isMobile === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -273,9 +301,6 @@ export default function Home() {
       </div>
     );
   }
-
-  // ✅ FIX: Supprimé le guard `if (isMobile && mobileLoading)` qui causait le re-render
-  // MobileForm gère son propre loader en interne — ne pas interférer ici
 
   if (loading) {
     return (
@@ -294,11 +319,15 @@ export default function Home() {
               <div
                 key={i}
                 className="w-3 h-3 rounded-full bg-[var(--accent)]"
-                style={{ animation: `pulse-glow 1.4s ease-in-out ${i * 0.2}s infinite` }}
+                style={{
+                  animation: `pulse-glow 1.4s ease-in-out ${i * 0.2}s infinite`,
+                }}
               />
             ))}
           </div>
-          <p className="text-sm text-zinc-500 mt-6">Loan analyse ton profil depuis 2042...</p>
+          <p className="text-sm text-zinc-500 mt-6">
+            Loan analyse ton profil depuis 2042...
+          </p>
         </div>
       </div>
     );
@@ -314,32 +343,36 @@ export default function Home() {
         <p className="text-lg text-zinc-400 leading-relaxed">
           Loan revient de 2042 et a vu ton futur job.
           <br />
-          <span className="text-zinc-500">30 secondes pour découvrir ce qui t&apos;attend.</span>
+          <span className="text-zinc-500">
+            30 secondes pour découvrir ce qui t&apos;attend.
+          </span>
         </p>
       </div>
 
       <TransmissionFeed />
 
-      {/* ✅ MOBILE : MobileForm gère son loader seul, page.tsx ne s'en mêle pas */}
-      {isMobile && (
-        <MobileForm
-          onResult={handleMobileResult}
-          // ✅ FIX: onLoadingChange supprimé — MobileForm gère le loader en interne
-        />
-      )}
+      {/* Mobile */}
+      {isMobile && <MobileForm onResult={handleMobileResult} />}
 
+      {/* Desktop */}
       {!isMobile && (
         <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-5 mt-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">Prénom *</label>
+              <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                Prénom *
+              </label>
               <input
                 type="text"
                 required
                 value={formData.prenom}
                 onChange={(e) => handleChange("prenom", e.target.value)}
                 onBlur={() => {
-                  if (!formData.prenom.trim()) setFieldErrors((prev) => ({ ...prev, prenom: SHORT_ERRORS.prenom.required }));
+                  if (!formData.prenom.trim())
+                    setFieldErrors((prev) => ({
+                      ...prev,
+                      prenom: SHORT_ERRORS.prenom.required,
+                    }));
                 }}
                 className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${borderClass("prenom")} text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
                 placeholder="Ton prénom"
@@ -347,13 +380,17 @@ export default function Home() {
               <FieldError field="prenom" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-1.5">Email *</label>
+              <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+                Email *
+              </label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => handleChange("email", e.target.value)}
-                onBlur={() => { if (formData.email) validateField("email", formData.email); }}
+                onBlur={() => {
+                  if (formData.email) validateField("email", formData.email);
+                }}
                 className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${borderClass("email")} text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
                 placeholder="ton@email.com"
               />
@@ -362,13 +399,17 @@ export default function Home() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Ville *</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+              Ville *
+            </label>
             <input
               type="text"
               required
               value={formData.ville}
               onChange={(e) => handleChange("ville", e.target.value)}
-              onBlur={() => { if (formData.ville) validateField("ville", formData.ville); }}
+              onBlur={() => {
+                if (formData.ville) validateField("ville", formData.ville);
+              }}
               className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${borderClass("ville")} text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
               placeholder="Paris, Lyon, Remote..."
             />
@@ -376,7 +417,9 @@ export default function Home() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Ton profil LinkedIn *</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+              Ton profil LinkedIn *
+            </label>
             <input
               type="text"
               required
@@ -385,7 +428,11 @@ export default function Home() {
               onBlur={() => {
                 if (formData.linkedinUrl) {
                   const result = validateField("linkedinUrl", formData.linkedinUrl);
-                  if (result.valid && result.cleaned) setFormData((prev) => ({ ...prev, linkedinUrl: result.cleaned! }));
+                  if (result.valid && result.cleaned)
+                    setFormData((prev) => ({
+                      ...prev,
+                      linkedinUrl: result.cleaned!,
+                    }));
                 }
               }}
               className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${borderClass("linkedinUrl")} text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
@@ -393,12 +440,16 @@ export default function Home() {
             />
             <FieldError field="linkedinUrl" />
             {!fieldErrors.linkedinUrl && (
-              <p className="text-xs text-zinc-600 mt-1">Loan a besoin de ton profil pour voyager dans le temps.</p>
+              <p className="text-xs text-zinc-600 mt-1">
+                Loan a besoin de ton profil pour voyager dans le temps.
+              </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">Ton titre de poste LinkedIn *</label>
+            <label className="block text-sm font-medium text-zinc-400 mb-1.5">
+              Ton titre de poste LinkedIn *
+            </label>
             <input
               type="text"
               required
@@ -406,9 +457,15 @@ export default function Home() {
               onChange={(e) => handleChange("jobTitle", e.target.value)}
               onBlur={() => {
                 if (!formData.jobTitle.trim()) {
-                  setFieldErrors((prev) => ({ ...prev, jobTitle: SHORT_ERRORS.jobTitle.required }));
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    jobTitle: SHORT_ERRORS.jobTitle.required,
+                  }));
                 } else if (isGibberish(formData.jobTitle.trim())) {
-                  setFieldErrors((prev) => ({ ...prev, jobTitle: SHORT_ERRORS.jobTitle.gibberish }));
+                  setFieldErrors((prev) => ({
+                    ...prev,
+                    jobTitle: SHORT_ERRORS.jobTitle.gibberish,
+                  }));
                 }
               }}
               className={`w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border ${borderClass("jobTitle")} text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition`}
@@ -427,32 +484,52 @@ export default function Home() {
               className="text-sm text-[var(--accent-light)] hover:underline flex items-center gap-1"
             >
               <span>{showOptional ? "−" : "+"}</span>
-              <span>Ajouter plus d&apos;infos pour un résultat encore plus précis</span>
+              <span>
+                Ajouter plus d&apos;infos pour un résultat encore plus précis
+              </span>
             </button>
           </div>
 
           {showOptional && (
             <div className="space-y-2 animate-in fade-in duration-200">
-              <label className="block text-sm font-medium text-zinc-400">Ton profil complet (facultatif)</label>
+              <label className="block text-sm font-medium text-zinc-400">
+                Ton profil complet (facultatif)
+              </label>
               <textarea
                 rows={5}
                 value={formData.profileText}
-                onChange={(e) => setFormData({ ...formData, profileText: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, profileText: e.target.value })
+                }
                 className="w-full px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] text-white placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)] transition resize-y"
                 placeholder="Pour un résultat ultra-personnalisé : va sur ton profil LinkedIn, fais Cmd+A (ou Ctrl+A) pour tout sélectionner, puis colle ici."
               />
               <p className="text-xs text-zinc-600">
                 💡 Astuce : Sur ta page LinkedIn, fais{" "}
-                <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> +{" "}
-                <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">A</kbd> puis{" "}
-                <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">Cmd</kbd> +{" "}
-                <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">C</kbd> pour tout copier.
+                <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                  Cmd
+                </kbd>{" "}
+                +{" "}
+                <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                  A
+                </kbd>{" "}
+                puis{" "}
+                <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                  Cmd
+                </kbd>{" "}
+                +{" "}
+                <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
+                  C
+                </kbd>{" "}
+                pour tout copier.
               </p>
             </div>
           )}
 
           {error && (
-            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">{error}</div>
+            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+              {error}
+            </div>
           )}
 
           <button
@@ -463,7 +540,8 @@ export default function Home() {
           </button>
 
           <p className="text-xs text-zinc-600 text-center">
-            Loan revient de 2042. Marge d&apos;erreur : le futur. Vos données restent en 2026.
+            Loan revient de 2042. Marge d&apos;erreur : le futur. Vos données
+            restent en 2026.
           </p>
         </form>
       )}
