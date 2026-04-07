@@ -66,17 +66,54 @@ export default function MobileForm({ onResult }: MobileFormProps) {
     : filteredSuggestions.slice(0, 6);
 
   const isGibberish = (text: string): boolean => {
-    const cleaned = text.trim().replace(/[\s\-'.]/g, "");
-    if (cleaned.length < 4) return false;
-    const lower = cleaned.toLowerCase();
-    const vowels = lower.match(/[aeiouyàâäéèêëïîôùûüœæ]/gi) || [];
-    const ratio = vowels.length / lower.length;
-    if (ratio < 0.15) return true;
+  const value = text.trim();
+
+  // Trop court / vide
+  if (value.length < 2) return false;
+
+  // Il faut au moins une lettre
+  if (!/[a-zA-ZÀ-ÿ]/.test(value)) return true;
+
+  // Version lettres seules pour certains checks globaux
+  const lettersOnly = value.replace(/[^a-zA-ZÀ-ÿ]/g, "").toLowerCase();
+
+  // Pas assez de matière pour conclure à du charabia
+  if (lettersOnly.length < 4) return false;
+
+  // Trop peu de voyelles sur l'ensemble du texte
+  const vowels = lettersOnly.match(/[aeiouyàâäéèêëïîôùûüœæ]/gi) || [];
+  const ratio = vowels.length / lettersOnly.length;
+  if (ratio < 0.12) return true;
+
+  // Répétition d'un même caractère : aaaa / qqqqq / xxxxx
+  if (/(.)\1{3,}/i.test(lettersOnly)) return true;
+
+  // Très faible diversité : azazazaz / ababab / xxyyxxxx
+  if (lettersOnly.length >= 8 && new Set(lettersOnly.split("")).size <= 2) {
+    return true;
+  }
+
+  // Vérifications mot par mot pour éviter les faux positifs
+  const words = value.match(/[a-zA-ZÀ-ÿ]{2,}/g) || [];
+
+  for (const word of words) {
+    const lower = word.toLowerCase();
+
+    // On ignore les mots courts / acronymes : PM, CTO, VP, AI...
+    if (lower.length <= 4) continue;
+
+    // 5 consonnes d'affilée dans un même mot
     if (/[^aeiouyàâäéèêëïîôùûüœæ]{5,}/i.test(lower)) return true;
+
+    // Mot composé d'un motif court répété : abcabcabc / xyxyxy
     if (/^(.{1,3})\1{2,}$/i.test(lower)) return true;
-    if (/(.)\1{2,}/i.test(lower)) return true;
-    return false;
-  };
+
+    // Répétition forte dans un mot
+    if (/(.)\1{3,}/i.test(lower)) return true;
+  }
+
+  return false;
+};
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
