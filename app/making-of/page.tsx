@@ -25,7 +25,7 @@ const TIMELINE = [
     step: "Heures 3–4",
     title: "Sortir une V0, puis reprendre la main",
     description:
-      "J'ai utilisé NanoCorp.so pour sortir une première V0 rapidement. J'ai ensuite repris le code pour l'itérer avec Claude Code, Dispatch, plusieurs workers et mon propre agent, afin de passer d'un prototype généré à une base plus propre et plus alignée avec le use case réel.",
+      "J'ai utilisé NanoCorp.so pour sortir une première V0 rapidement. J'ai ensuite repris le code pour l'itérer avec Claude Code, j'ai testé Dispatch, plusieurs workers et mon propre agent, afin de passer d'un prototype généré à une base plus propre et plus alignée avec le use case réel.",
     highlight: "V0 · Reprise en main · Itération",
   },
   {
@@ -185,7 +185,7 @@ export default function MakingOfPage() {
             >
               Manu
             </a>
-            {" "}· Product Manager · Socle Business, RH, Entrepreneuriat · Fondateur de{" "}
+            {" "}· Product · Socle Business | RH | Entrepreneuriat · Fondateur de{" "}
             <a
               href="https://cheznola.fr"
               target="_blank"
@@ -211,11 +211,11 @@ export default function MakingOfPage() {
             🎯 Le problème
           </h2>
           <p className="text-zinc-300 text-sm sm:text-base leading-relaxed mb-3">
-            <strong>Nola</strong> organise des dîners mensuels pour les Product People à Paris.
+            <strong>Nola</strong> est une association à but non lucratif qui organise des dîners mensuels pour les Product People à Paris.
             La communauté grandit par cooptation et le flux reste artisanal.
           </p>
           <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-3">
-            L'enjeu : trouver un format de découverte qui <strong>touche les bonnes personnes</strong> (PM, PO, CPO...),
+            L'enjeu : trouver un format de découverte qui <strong>touche les bonnes personnes</strong>,
             <strong> suscite l'intérêt</strong> et permette à chacun de se projeter,
             tout en <strong>restant cohérent avec l'esprit de Nola</strong>, sans paid ni cold outreach.
           </p>
@@ -233,8 +233,7 @@ export default function MakingOfPage() {
 
           <div className="p-4 sm:p-5 rounded-xl bg-[var(--card-bg)] border border-[var(--card-border)] mb-4">
             <p className="text-zinc-300 text-sm leading-relaxed mb-2">
-              <strong>Signal recherché :</strong> un taux de complétion élevé + une majorité de profils Product People 
-              = le format personnel engage la bonne audience.
+              <strong>Signal recherché :</strong> un taux de complétion élevé + une majorité de profils Product People.
             </p>
             <p className="text-zinc-500 text-sm leading-relaxed">
               Le projet vient d'être mis en ligne. Premiers résultats attendus après distribution sur LinkedIn.
@@ -341,7 +340,7 @@ export default function MakingOfPage() {
           </div>
 
           <p className="text-zinc-600 text-xs mt-4 text-center">
-            Ces learnings évolueront avec les données réelles.
+            Ces learnings évolueront avec les données réelles. Last update : 08/04/2026
           </p>
         </section>
 
@@ -377,8 +376,10 @@ export default function MakingOfPage() {
         <section className="text-center py-6 sm:py-8 border-t border-zinc-800">
           <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">Envie d'échanger ?</h2>
           <p className="text-zinc-400 text-sm sm:text-base mb-4 sm:mb-6">
-            Product Manager, actuellement en recherche d'opportunités.<br />
-            Socle Business, RH, Entrepreneuriat.<br />
+            Je suis actuellement en recherche d'opportunités.<br />
+            Socle Business, RH, Entrepreneuriat et Produit<br />
+          </p>
+          <p className="text-zinc-400 text-sm sm:text-base mb-4 sm:mb-6">
             Je fais aussi dîner des Product People avec Nola.
           </p>
 
