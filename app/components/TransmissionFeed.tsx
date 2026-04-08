@@ -8,7 +8,7 @@ import Link from 'next/link';
 // ============================================
 
 // Date de lancement - reset 7 avril 2026
-const LAUNCH_DATE = new Date('2026-04-07T10:00:00+02:00');
+const LAUNCH_DATE = new Date('2026-04-07T20:00:00+02:00');
 
 // Logs pré-écrits par catégorie - DRÔLES et CIBLÉS
 const FAKE_TRANSMISSIONS: Array<{
