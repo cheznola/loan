@@ -941,7 +941,7 @@ export async function POST(request: NextRequest) {
     const jobTitle = lines[0] || "";
     const fullProfileText = lines.slice(2).join("\n");
 
-    saveToAirtable({
+    await saveToAirtable({
       prenom,
       email,
       ville: ville || "",
