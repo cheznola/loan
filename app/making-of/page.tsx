@@ -185,7 +185,7 @@ export default function MakingOfPage() {
             >
               Manu
             </a>
-            {" "}· Product · Socle Business | RH | Entrepreneuriat · Fondateur de{" "}
+            {" "}· Product · Socle Business, RH, Entrepreneuriat · Fondateur de{" "}
             <a
               href="https://cheznola.fr"
               target="_blank"
