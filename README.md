@@ -1,2 +1,3 @@
-# loan
-Repository for Loan - # 2042 — Le simulateur de carrière du futur ## WHAT DOES YOUR COMPANY DO? 2042 est un projet indépendant qui prédit le futur job des professionnels à l'ère de l'IA (pour rire). Un personnage nommé Loan.
+# Loan (arrêté)
+
+Projet arrêté le 22 octobre 2026. Le code applicatif a été retiré ; il reste dans l'historique git.
